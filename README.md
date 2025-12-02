@@ -1,181 +1,70 @@
-# EduConnect - Educational Platform
+# Getting Started with Create React App
 
-An educational platform similar to Microsoft Teams for course management, messaging, discussions, and collaboration.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Features
+## Available Scripts
 
-### 🔐 Authentication
-- Login/Signup system with beautiful UI
-- Session persistence
-- Demo account available
+In the project directory, you can run:
 
-### 📚 Course Management
-- Browse 12 available courses
-- Enroll/Unenroll functionality
-- Track enrollment capacity
-- View course details and instructors
+### `npm start`
 
-### 💬 Social Features
-- Discussion posts (Questions, Announcements, Discussions)
-- Comment system
-- Emoji reactions (👍 ❤️ 😮 😂 😢)
-- Real-time messaging between users
-- User search and chat initiation
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-### 🎨 Modern UI/UX
-- Left sidebar navigation
-- Smooth animations and transitions
-- Responsive design
-- Dashboard with activity stats
-- Enhanced profile pages
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-### 📊 Dashboard
-- Quick stats overview
-- Recent activity feed
-- Enrolled courses count
-- Engagement metrics
+### `npm test`
 
-## MongoDB Requirements Fulfilled
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-✅ **Database & Collections**: Created `educonnect` database with 8 collections
-✅ **Data Insertion**: 27+ documents with realistic data and embedded documents
-✅ **CRUD Operations**: Complete Create, Read, Update, Delete operations
-✅ **Aggregation Pipelines**: 4 meaningful reports:
-   - Course Engagement Report
-   - Student Activity Report
-   - Instructor Workload Report
-   - Popular Posts Report
-✅ **Schema Validation**: JSON Schema for users and posts collections
-✅ **Indexes**: 7 indexes for performance optimization
+### `npm run build`
 
-## Setup Instructions
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### 1. Install MongoDB
-If you don't have MongoDB installed:
-- **Download**: https://www.mongodb.com/try/download/community
-- **Install MongoDB Community Server** for Windows
-- During installation, make sure to install as a service (it will start automatically)
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-### 2. Install Node.js Dependencies
-```bash
-npm install
-```
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### 3. Setup the Database
-**Option A - Using Node.js (Recommended):**
-```bash
-node setup-database.js
-```
+### `npm run eject`
 
-**Option B - Using MongoDB Compass (GUI):**
-1. Download MongoDB Compass: https://www.mongodb.com/try/download/compass
-2. Connect to `mongodb://localhost:27017`
-3. Import the data manually or use the mongosh shell from Compass
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-**Option C - If mongosh is installed:**
-```bash
-mongosh < mongodb-script.js
-```
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-### 4. Configure Environment
-```bash
-npm install
-```
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-### 5. Configure Environment (Optional)
-```bash
-# Copy the example env file
-copy .env.example .env
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-# Edit .env if you need custom settings (default works for local MongoDB)
-```
+## Learn More
 
-### 7. Start the Server
-```bash
-npm start
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-# Or for development with auto-reload:
-npm run dev
-```
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-### 8. Access the Application
-Open your browser and navigate to: `http://localhost:3000`
+### Code Splitting
 
-## Project Structure
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-```
-educonnect/
-├── mongodb-script.js      # Complete MongoDB setup script
-├── server.js              # Express API server
-├── package.json           # Node.js dependencies
-├── .env.example           # Environment variables template
-├── public/
-│   ├── index.html         # Main HTML page
-│   ├── styles.css         # Styling
-│   └── app.js             # Frontend JavaScript
-└── README.md              # This file
-```
+### Analyzing the Bundle Size
 
-## API Endpoints
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Courses
-- `GET /api/courses` - Get all courses
-- `GET /api/courses/:id` - Get course details
-- `GET /api/courses/:courseId/posts` - Get posts for a course
+### Making a Progressive Web App
 
-### Posts
-- `POST /api/posts` - Create a new post
-- `GET /api/posts/:postId/comments` - Get comments for a post
-- `GET /api/posts/:postId/reactions` - Get reactions for a post
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Comments
-- `POST /api/comments` - Add a comment to a post
+### Advanced Configuration
 
-### Reactions
-- `POST /api/reactions` - Add/update reaction to a post
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Messages
-- `GET /api/users/:userId/chats` - Get user's chats
-- `GET /api/messages/:user1Id/:user2Id` - Get messages between users
-- `POST /api/messages` - Send a message
+### Deployment
 
-### Users
-- `GET /api/users` - Get users (with optional filters)
-- `GET /api/users/:id` - Get user by ID
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-## Database Schema
+### `npm run build` fails to minify
 
-### Collections:
-- **users**: User accounts (students, instructors, admins)
-- **courses**: Course information
-- **posts**: Discussion posts, questions, announcements
-- **comments**: Comments on posts
-- **reactions**: Reactions to posts (like, love, etc.)
-- **chats**: Chat conversations between users
-- **messages**: Individual messages
-- **files**: File attachments
-
-## Technologies Used
-
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB
-- **Frontend**: Vanilla JavaScript, HTML5, CSS3
-- **Authentication**: JWT (ready for implementation)
-
-## Demo Account
-
-Login with Emma Williams (student):
-- **Email:** emma.williams@student.edu
-- **Password:** password123
-- **Enrolled in:** CS101, MATH201
-
-Or create your own account using the signup page!
-
-## Future Enhancements
-
-- User authentication and authorization
-- File upload functionality
-- Real-time notifications with WebSockets
-- Video conferencing integration
-- Assignment submission system
-- Grade management
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
