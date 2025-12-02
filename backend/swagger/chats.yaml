@@ -1,0 +1,75 @@
+paths:
+  /chats/{userId}:
+    get:
+      tags:
+        - Chats
+      summary: Get user's chats
+      description: Retrieve all chats for a specific user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID
+          example: 507f1f77bcf86cd799439011
+      responses:
+        "200":
+          description: List of chats with user details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: 507f1f77bcf86cd799439011
+                    otherUser:
+                      $ref: "#/components/schemas/User"
+                    lastMessage:
+                      type: string
+                      example: Hello there!
+                    lastMessageTime:
+                      type: string
+                      format: date-time
+                    createdAt:
+                      type: string
+                      format: date-time
+
+  /chats:
+    post:
+      tags:
+        - Chats
+      summary: Create or get a chat
+      description: Create a new chat between two users or get existing chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user1
+                - user2
+              properties:
+                user1:
+                  type: string
+                  example: 507f1f77bcf86cd799439011
+                user2:
+                  type: string
+                  example: 507f1f77bcf86cd799439012
+      responses:
+        "200":
+          description: Chat retrieved or created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

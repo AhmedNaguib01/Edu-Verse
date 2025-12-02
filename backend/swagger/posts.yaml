@@ -1,0 +1,159 @@
+paths:
+  /posts:
+    get:
+      tags:
+        - Posts
+      summary: Get all posts
+      description: Retrieve all posts or posts for a specific course
+      parameters:
+        - in: query
+          name: courseId
+          schema:
+            type: string
+          description: Filter posts by course ID
+          example: CS101
+      responses:
+        "200":
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+
+    post:
+      tags:
+        - Posts
+      summary: Create a new post
+      description: Create a new post in a course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - body
+                - type
+                - courseId
+              properties:
+                title:
+                  type: string
+                  example: Welcome to the course
+                body:
+                  type: string
+                  example: This is the post content
+                type:
+                  type: string
+                  enum: [discussion, announcement]
+                  example: discussion
+                courseId:
+                  type: string
+                  example: CS101
+                attachmentsId:
+                  type: array
+                  items:
+                    type: string
+                  example: ["507f1f77bcf86cd799439011"]
+                deadline:
+                  type: string
+                  format: date-time
+                  example: "2024-12-31T23:59:59Z"
+      responses:
+        "201":
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /posts/{id}:
+    get:
+      tags:
+        - Posts
+      summary: Get post by ID
+      description: Retrieve a specific post with comments and reactions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Post ID
+          example: 507f1f77bcf86cd799439011
+      responses:
+        "200":
+          description: Post details with comments and reactions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  post:
+                    $ref: "#/components/schemas/Post"
+                  comments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Comment"
+                  reactions:
+                    type: object
+                    properties:
+                      like:
+                        type: number
+                      love:
+                        type: number
+                      shocked:
+                        type: number
+                      laugh:
+                        type: number
+                      sad:
+                        type: number
+                  userReaction:
+                    type: string
+                    nullable: true
+                    example: like
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      tags:
+        - Posts
+      summary: Delete a post
+      description: Delete a post (author only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Post ID
+          example: 507f1f77bcf86cd799439011
+      responses:
+        "200":
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post deleted successfully
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

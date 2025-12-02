@@ -1,0 +1,68 @@
+paths:
+  /messages/{chatId}:
+    get:
+      tags:
+        - Messages
+      summary: Get messages for a chat
+      description: Retrieve all messages in a specific chat
+      parameters:
+        - in: path
+          name: chatId
+          required: true
+          schema:
+            type: string
+          description: Chat ID
+          example: 507f1f77bcf86cd799439011
+      responses:
+        "200":
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+
+  /messages:
+    post:
+      tags:
+        - Messages
+      summary: Send a message
+      description: Send a new message in a chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chatId
+                - senderId
+                - receiverId
+                - body
+              properties:
+                chatId:
+                  type: string
+                  example: 507f1f77bcf86cd799439011
+                senderId:
+                  type: string
+                  example: 507f1f77bcf86cd799439012
+                receiverId:
+                  type: string
+                  example: 507f1f77bcf86cd799439013
+                body:
+                  type: string
+                  example: Hello! How are you?
+      responses:
+        "201":
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

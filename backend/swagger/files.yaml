@@ -1,0 +1,121 @@
+paths:
+  /files:
+    post:
+      tags:
+        - Files
+      summary: Upload a file
+      description: Upload a file to the server
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload
+                courseId:
+                  type: string
+                  description: Associated course ID
+                  example: CS101
+      responses:
+        "201":
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/File"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /files/{id}:
+    get:
+      tags:
+        - Files
+      summary: Download a file
+      description: Download a file by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: File ID
+          example: 507f1f77bcf86cd799439011
+      responses:
+        "200":
+          description: File content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      tags:
+        - Files
+      summary: Delete a file
+      description: Delete a file from the server
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: File ID
+          example: 507f1f77bcf86cd799439011
+      responses:
+        "200":
+          description: File deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: File deleted successfully
+        "404":
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /files/course/{courseId}:
+    get:
+      tags:
+        - Files
+      summary: Get files for a course
+      description: Retrieve all files associated with a course
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          schema:
+            type: string
+          description: Course ID
+          example: CS101
+      responses:
+        "200":
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/File"
