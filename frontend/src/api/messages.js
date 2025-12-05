@@ -13,13 +13,21 @@ export const sendMessage = async (
   chatId,
   receiverId,
   text,
-  attachmentsId = []
+  attachmentsId = [],
+  replyTo = null
 ) => {
   const response = await apiClient.post("/messages", {
     chatId,
     receiverId,
     text,
     attachmentsId,
+    replyTo,
   });
+  return response.data;
+};
+
+// Delete a message
+export const deleteMessage = async (messageId) => {
+  const response = await apiClient.delete(`/messages/${messageId}`);
   return response.data;
 };

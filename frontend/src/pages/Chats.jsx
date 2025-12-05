@@ -1,17 +1,29 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Card, Avatar, AvatarFallback } from "../components/ui/display";
 import { Button } from "../components/ui/button";
-import { Send, Paperclip, X, Image as ImageIcon, FileText } from "lucide-react";
+import {
+  Send,
+  Paperclip,
+  X,
+  Image as ImageIcon,
+  FileText,
+  Reply,
+  Trash2,
+} from "lucide-react";
 import { getSession } from "../api/session";
 import { getAllChats } from "../api/chats";
-import { getMessages, sendMessage } from "../api/messages";
+import { getMessages, sendMessage, deleteMessage } from "../api/messages";
 import { uploadFile, getFileUrl } from "../api/files";
 import { getInitials, formatRelativeTime } from "../lib/utils";
 import { toast } from "sonner";
 import "../styles/chats.css";
 
+const POLLING_INTERVAL = 3000; // Poll every 3 seconds
+
 const Chats = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [chats, setChats] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
@@ -21,10 +33,14 @@ const Chats = () => {
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
+  const pollingRef = useRef(null);
+  const lastMessageCountRef = useRef(0);
 
   useEffect(() => {
     const session = getSession();
@@ -37,16 +53,66 @@ const Chats = () => {
   useEffect(() => {
     if (activeChat) {
       loadMessages(activeChat._id);
+      startPolling(activeChat._id);
     }
+    return () => stopPolling();
   }, [activeChat]);
 
   useEffect(() => {
-    scrollToBottom();
+    // Only scroll if new messages arrived
+    if (messages.length > lastMessageCountRef.current) {
+      scrollToBottom();
+    }
+    lastMessageCountRef.current = messages.length;
   }, [messages]);
 
   useEffect(() => {
     adjustTextareaHeight();
   }, [messageText]);
+
+  // Close context menu on click outside
+  useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+
+
+  const startPolling = useCallback((chatId) => {
+    stopPolling();
+    pollingRef.current = setInterval(async () => {
+      try {
+        // Poll for new messages
+        const data = await getMessages(chatId);
+        setMessages((prev) => {
+          if (data.length !== prev.length) {
+            return data;
+          }
+          return prev;
+        });
+        
+        // Also refresh chat list to get updated user names
+        const chatData = await getAllChats();
+        const chatList = chatData.chats || chatData;
+        setChats(chatList);
+        
+        // Update activeChat with fresh data
+        const updatedActiveChat = chatList.find(c => c._id === chatId);
+        if (updatedActiveChat) {
+          setActiveChat(updatedActiveChat);
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+      }
+    }, POLLING_INTERVAL);
+  }, []);
+
+  const stopPolling = useCallback(() => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,8 +129,16 @@ const Chats = () => {
   const loadChats = async () => {
     try {
       const data = await getAllChats();
-      // Handle both old format (array) and new format (object with chats array)
-      setChats(data.chats || data);
+      const chatList = data.chats || data;
+      setChats(chatList);
+      
+      // Update activeChat with fresh data if it exists
+      if (activeChat) {
+        const updatedActiveChat = chatList.find(c => c._id === activeChat._id);
+        if (updatedActiveChat) {
+          setActiveChat(updatedActiveChat);
+        }
+      }
     } catch (error) {
       console.error("Error loading chats:", error);
     }
@@ -75,7 +149,7 @@ const Chats = () => {
       setLoading(true);
       const data = await getMessages(chatId);
       setMessages(data);
-      // Scroll to bottom after messages load
+      lastMessageCountRef.current = data.length;
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
       }, 100);
@@ -93,7 +167,7 @@ const Chats = () => {
   };
 
   const validateAndAddFiles = (files) => {
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
     const allowedTypes = [
       "image/jpeg",
       "image/png",
@@ -147,6 +221,43 @@ const Chats = () => {
     validateAndAddFiles(files);
   };
 
+  const handleContextMenu = (e, message) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      message,
+    });
+  };
+
+  const handleReply = (message) => {
+    setReplyingTo(message);
+    setContextMenu(null);
+    textareaRef.current?.focus();
+  };
+
+  const handleDeleteMessage = async (message) => {
+    setContextMenu(null);
+    if (message.senderId !== user._id) {
+      toast.error("You can only delete your own messages");
+      return;
+    }
+
+    try {
+      await deleteMessage(message._id);
+      setMessages((prev) => prev.filter((m) => m._id !== message._id));
+      toast.success("Message deleted");
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      toast.error("Failed to delete message");
+    }
+  };
+
+  const cancelReply = () => {
+    setReplyingTo(null);
+  };
+
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
@@ -162,31 +273,27 @@ const Chats = () => {
     try {
       setUploading(true);
 
-      // Upload files first
       const uploadedFileIds = [];
       for (const file of selectedFiles) {
         const uploadedFile = await uploadFile(file);
         uploadedFileIds.push(uploadedFile._id);
       }
 
-      // Get receiver ID
       const receiverId =
         activeChat.user1.id === user._id
           ? activeChat.user2.id
           : activeChat.user1.id;
 
-      // Send message
       const newMessage = await sendMessage(
         activeChat._id,
         receiverId,
         messageText || "📎 Attachment",
-        uploadedFileIds
+        uploadedFileIds,
+        replyingTo?._id || null
       );
 
-      // Add message to list
       setMessages((prev) => [...prev, newMessage]);
 
-      // Update chat's last message and move to top
       setChats((prev) => {
         const updatedChat = prev.find((chat) => chat._id === activeChat._id);
         if (updatedChat) {
@@ -203,9 +310,9 @@ const Chats = () => {
         return prev;
       });
 
-      // Clear inputs
       setMessageText("");
       setSelectedFiles([]);
+      setReplyingTo(null);
 
       toast.success("Message sent!");
     } catch (error) {
@@ -219,6 +326,10 @@ const Chats = () => {
   const getOtherUser = (chat) => {
     if (!user) return null;
     return chat.user1.id === user._id ? chat.user2 : chat.user1;
+  };
+
+  const getReplyMessage = (replyToId) => {
+    return messages.find((m) => m._id === replyToId);
   };
 
   return (
@@ -276,18 +387,25 @@ const Chats = () => {
             </Card>
           </div>
 
+
           {/* Chat Window */}
           <div className="chat-window">
             {activeChat ? (
               <Card className="chat-window-card">
                 <div className="chat-window-header">
-                  <Avatar>
+                  <Avatar
+                    className="clickable-avatar"
+                    onClick={() => navigate(`/profile/${getOtherUser(activeChat)?.id}`)}
+                  >
                     <AvatarFallback className="avatar-fallback-primary">
                       {getInitials(getOtherUser(activeChat)?.name || "U")}
                     </AvatarFallback>
                   </Avatar>
                   <div className="chat-window-user">
-                    <h3 className="chat-window-name">
+                    <h3
+                      className="chat-window-name clickable-name"
+                      onClick={() => navigate(`/profile/${getOtherUser(activeChat)?.id}`)}
+                    >
                       {getOtherUser(activeChat)?.name}
                     </h3>
                   </div>
@@ -315,82 +433,116 @@ const Chats = () => {
                       <p>No messages yet. Start the conversation!</p>
                     </div>
                   ) : (
-                    messages.map((message) => (
-                      <div
-                        key={message._id}
-                        className={`message ${
-                          message.senderId === user._id
-                            ? "message-me"
-                            : "message-other"
-                        }`}
-                      >
-                        {message.senderId !== user._id && (
-                          <Avatar className="message-avatar">
-                            <AvatarFallback className="avatar-fallback-secondary">
-                              {getInitials(
-                                getOtherUser(activeChat)?.name || "U"
-                              )}
-                            </AvatarFallback>
-                          </Avatar>
-                        )}
-                        <div className="message-content">
-                          <div className="message-bubble">
-                            {message.attachmentsId &&
-                              message.attachmentsId.length > 0 && (
-                                <div className="message-attachments">
-                                  {message.attachmentsId.map((fileId) => {
-                                    const fileUrl = getFileUrl(fileId);
-
-                                    // Try to display as image first
-                                    return (
-                                      <div key={fileId}>
-                                        <div className="message-image-container">
-                                          <img
-                                            src={fileUrl}
-                                            alt="Attachment"
-                                            className="message-image"
-                                            onClick={() =>
-                                              window.open(fileUrl, "_blank")
-                                            }
-                                            onError={(e) => {
-                                              // If image fails to load, show download link instead
-                                              e.target.style.display = "none";
-                                              e.target.nextSibling.style.display =
-                                                "flex";
-                                            }}
-                                          />
-                                          <a
-                                            href={fileUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="message-attachment"
-                                            style={{ display: "none" }}
-                                          >
-                                            <FileText size={16} />
-                                            <span>View attachment</span>
-                                          </a>
+                    messages.map((message) => {
+                      const replyMsg = message.replyTo
+                        ? getReplyMessage(message.replyTo)
+                        : null;
+                      return (
+                        <div
+                          key={message._id}
+                          className={`message ${
+                            message.senderId === user._id
+                              ? "message-me"
+                              : "message-other"
+                          }`}
+                          onContextMenu={(e) => handleContextMenu(e, message)}
+                        >
+                          {message.senderId !== user._id && (
+                            <Avatar className="message-avatar">
+                              <AvatarFallback className="avatar-fallback-secondary">
+                                {getInitials(
+                                  getOtherUser(activeChat)?.name || "U"
+                                )}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                          <div className="message-content">
+                            {replyMsg && (
+                              <div className="message-reply-preview">
+                                <Reply size={12} />
+                                <span className="reply-text">
+                                  {replyMsg.text?.substring(0, 50) ||
+                                    "Attachment"}
+                                  {replyMsg.text?.length > 50 ? "..." : ""}
+                                </span>
+                              </div>
+                            )}
+                            <div className="message-bubble">
+                              {message.attachmentsId &&
+                                message.attachmentsId.length > 0 && (
+                                  <div className="message-attachments">
+                                    {message.attachmentsId.map((fileId) => {
+                                      const fileUrl = getFileUrl(fileId);
+                                      return (
+                                        <div key={fileId}>
+                                          <div className="message-image-container">
+                                            <img
+                                              src={fileUrl}
+                                              alt="Attachment"
+                                              className="message-image"
+                                              onClick={() =>
+                                                window.open(fileUrl, "_blank")
+                                              }
+                                              onError={(e) => {
+                                                e.target.style.display = "none";
+                                                e.target.nextSibling.style.display =
+                                                  "flex";
+                                              }}
+                                            />
+                                            <a
+                                              href={fileUrl}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="message-attachment"
+                                              style={{ display: "none" }}
+                                            >
+                                              <FileText size={16} />
+                                              <span>View attachment</span>
+                                            </a>
+                                          </div>
                                         </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                            {message.text &&
-                              message.text !== "📎 Attachment" && (
-                                <p className="message-text">{message.text}</p>
-                              )}
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              {message.text &&
+                                message.text !== "📎 Attachment" && (
+                                  <p className="message-text">{message.text}</p>
+                                )}
+                            </div>
+                            <span className="message-time">
+                              {formatRelativeTime(message.createdAt)}
+                            </span>
                           </div>
-                          <span className="message-time">
-                            {formatRelativeTime(message.createdAt)}
-                          </span>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                   <div ref={messagesEndRef} />
                 </div>
 
+
                 <div className="chat-input-container">
+                  {replyingTo && (
+                    <div className="reply-bar">
+                      <div className="reply-info">
+                        <Reply size={14} />
+                        <span>
+                          Replying to:{" "}
+                          {replyingTo.text?.substring(0, 40) || "Attachment"}
+                          {replyingTo.text?.length > 40 ? "..." : ""}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={cancelReply}
+                        className="reply-cancel"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+
                   {selectedFiles.length > 0 && (
                     <div className="selected-files">
                       {selectedFiles.map((file, index) => (
@@ -479,6 +631,31 @@ const Chats = () => {
           </div>
         </div>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          className="context-menu"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button
+            className="context-menu-item"
+            onClick={() => handleReply(contextMenu.message)}
+          >
+            <Reply size={16} />
+            <span>Reply</span>
+          </button>
+          {contextMenu.message.senderId === user?._id && (
+            <button
+              className="context-menu-item context-menu-item-danger"
+              onClick={() => handleDeleteMessage(contextMenu.message)}
+            >
+              <Trash2 size={16} />
+              <span>Delete</span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

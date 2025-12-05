@@ -15,7 +15,7 @@
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 32rem;
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   animation: slideIn 0.2s ease-out;
@@ -25,13 +25,13 @@
 
 .dialog-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .dialog-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .dialog-body {
@@ -47,8 +47,8 @@
   min-width: 8rem;
   overflow: hidden;
   border-radius: var(--radius);
-  border: 1px solid #e5e7eb;
-  background-color: white;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
   box-shadow: var(--shadow-lg);
   animation: slideIn 0.15s ease-out;
 }
@@ -63,15 +63,15 @@
   font-size: 0.875rem;
   outline: none;
   transition: background-color 0.15s;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .dropdown-item:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
 }
 
 .dropdown-item:focus {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
 }
 
 @keyframes fadeIn {

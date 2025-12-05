@@ -4,7 +4,7 @@ const {
   register,
   login,
   getCurrentUser,
-} = require("../controllers/authController");
+} = require("../services/auth");
 const {
   getUserProfile,
   updateUserProfile,
@@ -12,7 +12,7 @@ const {
   getUserCourses,
   searchUsers,
   getUserStats,
-} = require("../controllers/userController");
+} = require("../services/user");
 const { auth } = require("../middleware/auth");
 
 // Authentication routes

@@ -4,7 +4,7 @@ const {
   getAllChats,
   getChatById,
   createChat,
-} = require("../controllers/chatController");
+} = require("../services/chat");
 const { auth } = require("../middleware/auth");
 
 router.get("/", auth, getAllChats);

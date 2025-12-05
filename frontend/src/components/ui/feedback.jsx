@@ -6,9 +6,9 @@ export function SonnerToaster() {
       position="bottom-right"
       toastOptions={{
         style: {
-          background: "white",
-          color: "var(--dark)",
-          border: "1px solid #e5e7eb",
+          background: "var(--card-bg)",
+          color: "var(--text-primary)",
+          border: "1px solid var(--border-color)",
           borderRadius: "var(--radius)",
         },
       }}

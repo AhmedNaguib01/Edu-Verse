@@ -1,6 +1,7 @@
 .profile-page {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 .profile-container {
@@ -18,6 +19,8 @@
 .profile-card {
   padding: 2rem;
   box-shadow: var(--shadow-card);
+  background-color: var(--card-bg);
+  transition: background-color 0.3s ease;
 }
 
 .profile-header {
@@ -49,11 +52,11 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .profile-email {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -63,7 +66,7 @@
 }
 
 .profile-bio {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 1.5rem;
 }
 
@@ -112,7 +115,7 @@
 
 .stat-label {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .stat-value {
@@ -136,6 +139,8 @@
 .section-card {
   padding: 1.5rem;
   box-shadow: var(--shadow-card);
+  background-color: var(--card-bg);
+  transition: background-color 0.3s ease;
 }
 
 .section-header {
@@ -154,7 +159,7 @@
 .section-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .section-content {
@@ -170,7 +175,7 @@
   gap: 1rem;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: var(--bg-tertiary);
 }
 
 .post-item-info {
@@ -179,24 +184,24 @@
 
 .post-item-title {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
 }
 
 .post-item-desc {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .post-item-date {
   font-size: 0.75rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .course-item {
   padding: 0.75rem;
   border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: var(--bg-tertiary);
 }
 
 .course-item-header {
@@ -208,7 +213,7 @@
 
 .course-item-title {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .course-item-meta {
@@ -220,7 +225,7 @@
 }
 
 .course-item-semester {
-  color: #6c757d;
+  color: var(--text-secondary);
   flex: 1;
 }
 
@@ -232,7 +237,7 @@
 
 .empty-text {
   text-align: center;
-  color: #6c757d;
+  color: var(--text-secondary);
   padding: 2rem;
 }
 
@@ -266,6 +271,7 @@
   max-height: 90vh;
   overflow-y: auto;
   padding: 0;
+  background-color: var(--card-bg);
 }
 
 .modal-header {
@@ -273,13 +279,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .modal-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .modal-close {
@@ -288,12 +294,12 @@
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 0.5rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   transition: background-color 0.2s;
 }
 
 .modal-close:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
 }
 
 .edit-profile-form {
@@ -311,18 +317,20 @@
 
 .form-label {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   font-size: 0.875rem;
 }
 
 .form-input,
 .form-textarea {
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   font-size: 0.875rem;
   font-family: inherit;
   transition: border-color 0.2s;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-input:focus,
@@ -348,7 +356,7 @@
   height: 100px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -365,8 +373,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6;
-  color: #6c757d;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .preview-placeholder p {
@@ -379,7 +387,7 @@
   gap: 1rem;
   justify-content: flex-end;
   padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
 }
 
 .start-chat-button {
@@ -400,7 +408,7 @@
 .loading-profile {
   text-align: center;
   padding: 3rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 /* Three-dot menu */
@@ -415,7 +423,7 @@
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 0.5rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   transition: background-color 0.2s;
   display: flex;
   align-items: center;
@@ -423,7 +431,7 @@
 }
 
 .menu-button:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
 }
 
 .menu-dropdown {
@@ -431,8 +439,8 @@
   top: 100%;
   right: 0;
   margin-top: 0.5rem;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-width: 150px;
@@ -449,13 +457,13 @@
   border: none;
   cursor: pointer;
   font-size: 0.875rem;
-  color: var(--dark);
+  color: var(--text-primary);
   transition: background-color 0.2s;
   text-align: left;
 }
 
 .menu-item:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
 }
 
 .menu-item:first-child {

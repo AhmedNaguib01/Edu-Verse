@@ -9,7 +9,10 @@ import {
   LogOut,
   Search,
   X,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useDarkMode } from "../hooks";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, Card } from "./ui/display";
 import {
@@ -27,6 +30,7 @@ import "../styles/navbar.css";
 
 const Navbar = ({ user }) => {
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -184,6 +188,13 @@ const Navbar = ({ user }) => {
 
         {/* Right: Actions */}
         <div className="navbar-actions">
+          <button
+            className="theme-toggle"
+            onClick={toggleDarkMode}
+            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDarkMode ? <Sun /> : <Moon />}
+          </button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="avatar-button">

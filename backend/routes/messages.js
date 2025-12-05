@@ -4,7 +4,7 @@ const {
   getMessages,
   createMessage,
   deleteMessage,
-} = require("../controllers/messageController");
+} = require("../services/message");
 const { auth } = require("../middleware/auth");
 
 router.get("/", auth, getMessages);

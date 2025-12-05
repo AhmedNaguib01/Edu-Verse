@@ -1,6 +1,7 @@
 .course-details-page {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 .course-details-container {
@@ -31,7 +32,7 @@
 .course-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -45,7 +46,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 
@@ -53,7 +54,7 @@
 .course-tabs {
   display: flex;
   gap: 0.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--border-color);
   margin-bottom: 2rem;
 }
 
@@ -65,7 +66,7 @@
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -138,12 +139,12 @@
 
 .user-name {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .user-meta {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .post-content {
@@ -161,11 +162,11 @@
 .post-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .post-text {
-  color: #6c757d;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -190,11 +191,11 @@
 .section-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .course-description {
-  color: #6c757d;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -214,7 +215,7 @@
 }
 
 .instructor-item:hover {
-  background-color: #f9fafb;
+  background-color: var(--bg-tertiary);
 }
 
 .instructor-info {
@@ -224,12 +225,12 @@
 
 .instructor-name {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .instructor-email {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .info-grid {
@@ -246,14 +247,14 @@
 
 .info-label {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .info-value {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 /* Empty State */
@@ -279,7 +280,7 @@
 .error {
   text-align: center;
   padding: 3rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1.125rem;
 }
 
@@ -365,7 +366,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .files-columns {
@@ -377,7 +378,7 @@
 
 .column-header {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -466,17 +467,17 @@
   gap: 1rem;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
   transition: background-color 0.2s;
 }
 
 .file-row:hover {
-  background-color: #f9fafb;
+  background-color: var(--bg-tertiary);
 }
 
 .file-cell {
   font-size: 0.875rem;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .file-name-cell {
@@ -513,7 +514,7 @@
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .empty-files .empty-icon {
@@ -599,7 +600,7 @@
 .create-post-header h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -617,7 +618,7 @@
 
 .form-group label {
   font-weight: 500;
-  color: var(--dark);
+  color: var(--text-primary);
   font-size: 0.875rem;
   display: flex;
   align-items: center;
@@ -629,10 +630,12 @@
 .form-textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   font-size: 0.875rem;
   transition: border-color 0.2s;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-input:focus,
@@ -650,7 +653,7 @@
 
 .form-select {
   cursor: pointer;
-  background-color: white;
+  background-color: var(--input-bg);
 }
 
 .form-actions {

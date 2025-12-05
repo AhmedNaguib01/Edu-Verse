@@ -59,6 +59,13 @@ const Home = () => {
       setUser(session.user);
       loadPosts();
     }
+
+    // Refresh posts every 30 seconds to get updated user names
+    const refreshInterval = setInterval(() => {
+      loadPosts();
+    }, 30000);
+
+    return () => clearInterval(refreshInterval);
   }, []);
 
   useEffect(() => {

@@ -3,18 +3,19 @@
   font-weight: 500;
   margin-bottom: 0.5rem;
   display: block;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .input {
   display: flex;
   width: 100%;
   border-radius: var(--radius);
-  border: 1px solid #d1d5db;
-  background-color: white;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
 }
 
 .input:focus {
@@ -29,20 +30,21 @@
 }
 
 .input::placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 .textarea {
   display: flex;
   width: 100%;
   border-radius: var(--radius);
-  border: 1px solid #d1d5db;
-  background-color: white;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   min-height: 80px;
   resize: vertical;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
   font-family: inherit;
 }
 
@@ -58,7 +60,7 @@
 }
 
 .textarea::placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 .post-textarea {

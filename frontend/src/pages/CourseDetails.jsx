@@ -80,6 +80,16 @@ const CourseDetails = () => {
       setUser(session.user);
       loadCourseData(session.user);
     }
+
+    // Refresh data every 30 seconds to get updated user names
+    const refreshInterval = setInterval(() => {
+      const currentSession = getSession();
+      if (currentSession) {
+        loadCourseData(currentSession.user);
+      }
+    }, 30000);
+
+    return () => clearInterval(refreshInterval);
   }, [id]);
 
   const loadCourseData = async (currentUser) => {

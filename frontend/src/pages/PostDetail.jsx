@@ -47,6 +47,15 @@ const PostDetail = () => {
       setUser(session.user);
       loadPost();
     }
+
+    // Refresh post every 30 seconds to get updated user names
+    const refreshInterval = setInterval(() => {
+      if (getSession()) {
+        loadPost();
+      }
+    }, 30000);
+
+    return () => clearInterval(refreshInterval);
   }, [postId]);
 
   const loadPost = async () => {

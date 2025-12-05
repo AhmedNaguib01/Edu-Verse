@@ -6,7 +6,7 @@ const {
   downloadFile,
   getFilesByCourse,
   deleteFile,
-} = require("../controllers/fileController");
+} = require("../services/file");
 const { auth } = require("../middleware/auth");
 
 // Configure multer for memory storage

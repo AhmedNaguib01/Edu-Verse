@@ -10,8 +10,8 @@
 /* Post Card Base */
 .post-card {
   box-shadow: var(--shadow-card);
-  transition: box-shadow 0.3s;
-  background: white;
+  transition: box-shadow 0.3s, background-color 0.3s;
+  background: var(--card-bg);
   border-radius: var(--radius);
 }
 
@@ -62,7 +62,7 @@
 .post-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .post-text {
-  color: #6c757d;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
 }
@@ -154,7 +154,7 @@
 
 .user-name {
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -170,7 +170,7 @@
 
 .user-meta {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -191,12 +191,11 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 0;
-  border-top: 1px solid #e5e7eb;
 }
 
 /* Add border-bottom only when needed */
 .post-reactions--with-bottom-border {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .reaction-button {
@@ -235,7 +234,6 @@
 .comments-section {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
 }
 
 /* Remove top border and padding when it's the main content */
@@ -251,7 +249,7 @@
   gap: 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
 }
 
@@ -264,7 +262,7 @@
 
 .no-comments {
   text-align: center;
-  color: #6c757d;
+  color: var(--text-secondary);
   padding: 1rem;
   font-style: italic;
   margin: 0;
@@ -281,7 +279,7 @@
 
 .comment-content {
   flex: 1;
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
   padding: 0.75rem;
   border-radius: 0.75rem;
 }
@@ -296,7 +294,7 @@
 .comment-author {
   font-weight: 600;
   font-size: 0.875rem;
-  color: var(--dark);
+  color: var(--text-primary);
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -308,12 +306,12 @@
 
 .comment-time {
   font-size: 0.75rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .comment-text {
   font-size: 0.875rem;
-  color: var(--dark);
+  color: var(--text-primary);
   line-height: 1.5;
   margin: 0;
 }
@@ -335,10 +333,12 @@
 .comment-input {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 1.5rem;
   font-size: 0.875rem;
   transition: border-color 0.2s;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .comment-input:focus {
@@ -378,8 +378,8 @@
   top: 100%;
   right: 0;
   margin-top: 0.25rem;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
   min-width: 150px;
@@ -397,7 +397,7 @@
   border: none;
   cursor: pointer;
   font-size: 0.875rem;
-  color: var(--dark);
+  color: var(--text-primary);
   transition: background-color 0.2s;
   text-align: left;
 }
@@ -426,7 +426,7 @@
 
 .form-group label {
   font-weight: 500;
-  color: var(--dark);
+  color: var(--text-primary);
   font-size: 0.875rem;
   display: flex;
   align-items: center;
@@ -438,10 +438,12 @@
 .form-textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
   font-size: 0.875rem;
   transition: border-color 0.2s;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-input:focus,
@@ -459,7 +461,7 @@
 
 .form-select {
   cursor: pointer;
-  background-color: white;
+  background-color: var(--input-bg);
 }
 
 .form-actions {
@@ -481,7 +483,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--dark);
+  color: var(--text-primary);
   font-size: 0.875rem;
   transition: all 0.2s;
   border-radius: var(--radius);
@@ -505,7 +507,7 @@
 .empty-posts {
   text-align: center;
   padding: 3rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
@@ -531,7 +533,7 @@
 .sidebar-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-primary);
 }
 
 .sidebar-content {
@@ -543,7 +545,7 @@
 /* Event Item */
 .event-item {
   padding: 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
   display: flex;
   flex-direction: column;
@@ -561,13 +563,13 @@
 
 .event-title {
   font-weight: 500;
-  color: var(--dark);
+  color: var(--text-primary);
   margin: 0;
 }
 
 .event-meta {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -578,7 +580,7 @@
 
 .empty-events {
   text-align: center;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   padding: 1rem;
 }

@@ -1,6 +1,7 @@
 .home-page {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 .home-container {
@@ -162,7 +163,7 @@
 
 .user-meta {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .post-content {
@@ -184,7 +185,7 @@
 }
 
 .post-text {
-  color: #6c757d;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -192,7 +193,7 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .action-button {
@@ -321,12 +322,14 @@
 .post-title-input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
   transition: border-color 0.2s;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .post-title-input:focus {
@@ -387,10 +390,11 @@
 
 .post-type-select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  background-color: white;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   cursor: pointer;
   transition: border-color 0.2s;
 }

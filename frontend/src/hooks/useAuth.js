@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSession, logout as logoutApi } from "../api/session";
+import { getSession, clearSession } from "../api/session";
 import { login as loginApi, register as registerApi } from "../api/auth";
 import { toast } from "sonner";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES, ROUTES } from "../constants";
@@ -75,7 +75,7 @@ export function useAuth() {
 
   // Logout function
   const logout = useCallback(() => {
-    logoutApi();
+    clearSession();
     setUser(null);
     setIsAuthenticated(false);
     toast.success(SUCCESS_MESSAGES.LOGOUT_SUCCESS);
