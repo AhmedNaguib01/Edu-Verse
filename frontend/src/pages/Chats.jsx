@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { Card, Avatar, AvatarFallback } from "../components/ui/display";
+import { Card, Avatar, AvatarFallback, AvatarImage } from "../components/ui/display";
 import { Button } from "../components/ui/button";
 import {
   Send,
@@ -82,25 +82,23 @@ const Chats = () => {
     stopPolling();
     pollingRef.current = setInterval(async () => {
       try {
-        // Poll for new messages
+        // Poll for new messages only
         const data = await getMessages(chatId);
         setMessages((prev) => {
-          if (data.length !== prev.length) {
+          // Create a map of existing message IDs
+          const existingIds = new Set(prev.map((m) => m._id));
+          const serverIds = new Set(data.map((m) => m._id));
+          
+          // Check if there are new messages from server
+          const hasNewMessages = data.some((m) => !existingIds.has(m._id));
+          // Check if any messages were deleted
+          const hasDeletedMessages = prev.some((m) => !serverIds.has(m._id));
+          
+          if (hasNewMessages || hasDeletedMessages) {
             return data;
           }
           return prev;
         });
-        
-        // Also refresh chat list to get updated user names
-        const chatData = await getAllChats();
-        const chatList = chatData.chats || chatData;
-        setChats(chatList);
-        
-        // Update activeChat with fresh data
-        const updatedActiveChat = chatList.find(c => c._id === chatId);
-        if (updatedActiveChat) {
-          setActiveChat(updatedActiveChat);
-        }
       } catch (error) {
         console.error("Polling error:", error);
       }
@@ -131,14 +129,6 @@ const Chats = () => {
       const data = await getAllChats();
       const chatList = data.chats || data;
       setChats(chatList);
-      
-      // Update activeChat with fresh data if it exists
-      if (activeChat) {
-        const updatedActiveChat = chatList.find(c => c._id === activeChat._id);
-        if (updatedActiveChat) {
-          setActiveChat(updatedActiveChat);
-        }
-      }
     } catch (error) {
       console.error("Error loading chats:", error);
     }
@@ -292,7 +282,13 @@ const Chats = () => {
         replyingTo?._id || null
       );
 
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => {
+        // Avoid duplicates - check if message already exists
+        if (prev.some((m) => m._id === newMessage._id)) {
+          return prev;
+        }
+        return [...prev, newMessage];
+      });
 
       setChats((prev) => {
         const updatedChat = prev.find((chat) => chat._id === activeChat._id);
@@ -360,6 +356,12 @@ const Chats = () => {
                         onClick={() => setActiveChat(chat)}
                       >
                         <Avatar>
+                          {otherUser?.profilePicture && (
+                            <AvatarImage
+                              src={getFileUrl(otherUser.profilePicture)}
+                              alt={otherUser?.name}
+                            />
+                          )}
                           <AvatarFallback className="avatar-fallback-primary">
                             {getInitials(otherUser?.name || "U")}
                           </AvatarFallback>
@@ -397,6 +399,12 @@ const Chats = () => {
                     className="clickable-avatar"
                     onClick={() => navigate(`/profile/${getOtherUser(activeChat)?.id}`)}
                   >
+                    {getOtherUser(activeChat)?.profilePicture && (
+                      <AvatarImage
+                        src={getFileUrl(getOtherUser(activeChat).profilePicture)}
+                        alt={getOtherUser(activeChat)?.name}
+                      />
+                    )}
                     <AvatarFallback className="avatar-fallback-primary">
                       {getInitials(getOtherUser(activeChat)?.name || "U")}
                     </AvatarFallback>
@@ -449,6 +457,12 @@ const Chats = () => {
                         >
                           {message.senderId !== user._id && (
                             <Avatar className="message-avatar">
+                              {getOtherUser(activeChat)?.profilePicture && (
+                                <AvatarImage
+                                  src={getFileUrl(getOtherUser(activeChat).profilePicture)}
+                                  alt={getOtherUser(activeChat)?.name}
+                                />
+                              )}
                               <AvatarFallback className="avatar-fallback-secondary">
                                 {getInitials(
                                   getOtherUser(activeChat)?.name || "U"

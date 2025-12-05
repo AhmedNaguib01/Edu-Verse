@@ -10,6 +10,7 @@ import {
   Badge,
 } from "../components/ui/display";
 import { Button } from "../components/ui/button";
+import { Textarea } from "../components/ui/form-elements";
 import {
   Heart,
   MessageCircle,
@@ -19,10 +20,14 @@ import {
   ThumbsUp,
   Send,
   ArrowLeft,
+  MoreVertical,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import { getSession } from "../api/session";
 import { getComments, createComment } from "../api/comments";
 import { getReactions, upsertReaction, deleteReaction } from "../api/reactions";
+import { updatePost, deletePost } from "../api/posts";
 import { getInitials, formatRelativeTime } from "../lib/utils";
 import { getFileUrl } from "../api/files";
 import { toast } from "sonner";
@@ -40,6 +45,10 @@ const PostDetail = () => {
     reactions: {},
     userReaction: null,
   });
+  const [openMenu, setOpenMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
 
   useEffect(() => {
     const session = getSession();
@@ -142,6 +151,54 @@ const PostDetail = () => {
     }
   };
 
+  const handleEditPost = () => {
+    setEditTitle(post.title);
+    setEditBody(post.body);
+    setIsEditing(true);
+    setOpenMenu(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditTitle("");
+    setEditBody("");
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editTitle.trim() || !editBody.trim()) {
+      toast.error("Please enter both title and content");
+      return;
+    }
+
+    try {
+      const updated = await updatePost(postId, {
+        title: editTitle,
+        body: editBody,
+      });
+      setPost((prev) => ({ ...prev, title: updated.title, body: updated.body }));
+      setIsEditing(false);
+      toast.success("Post updated successfully");
+    } catch (error) {
+      console.error("Error updating post:", error);
+      toast.error("Failed to update post");
+    }
+  };
+
+  const handleDeletePost = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) {
+      return;
+    }
+
+    try {
+      await deletePost(postId);
+      toast.success("Post deleted successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error("Failed to delete post");
+    }
+  };
+
   const reactionIcons = {
     like: ThumbsUp,
     love: Heart,
@@ -226,17 +283,79 @@ const PostDetail = () => {
                   {post.type && (
                     <Badge className="badge-secondary">{post.type}</Badge>
                   )}
+                  {user && post.sender?.id === user._id && (
+                    <div className="post-menu">
+                      <button
+                        className="menu-button"
+                        onClick={() => setOpenMenu(!openMenu)}
+                      >
+                        <MoreVertical size={20} />
+                      </button>
+                      {openMenu && (
+                        <div className="menu-dropdown">
+                          <button
+                            className="menu-item"
+                            onClick={handleEditPost}
+                          >
+                            <Edit size={16} />
+                            Edit Post
+                          </button>
+                          <button
+                            className="menu-item delete-item"
+                            onClick={handleDeletePost}
+                          >
+                            <Trash2 size={16} />
+                            Delete Post
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </CardHeader>
 
             <CardContent className="post-content">
-              <div className="post-body">
-                <h1 className="post-title">{post.title || "Untitled Post"}</h1>
-                <p className="post-text">
-                  {post.body || "No content available"}
-                </p>
-              </div>
+              {isEditing ? (
+                <div className="edit-post-form">
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="post-title-input"
+                    placeholder="Post title..."
+                  />
+                  <Textarea
+                    value={editBody}
+                    onChange={(e) => setEditBody(e.target.value)}
+                    className="post-textarea"
+                    placeholder="Post content..."
+                  />
+                  <div className="edit-post-actions">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="btn-primary"
+                      onClick={handleSaveEdit}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="post-body">
+                  <h1 className="post-title">{post.title || "Untitled Post"}</h1>
+                  <p className="post-text">
+                    {post.body || "No content available"}
+                  </p>
+                </div>
+              )}
 
               {/* Post Images */}
               {post.attachmentsId && post.attachmentsId.length > 0 && (

@@ -23,9 +23,10 @@ import {
   X,
   Trash2,
   MoreVertical,
+  Edit,
 } from "lucide-react";
 import { getSession } from "../api/session";
-import { getAllPosts, createPost, deletePost } from "../api/posts";
+import { getAllPosts, createPost, deletePost, updatePost } from "../api/posts";
 import { getComments, createComment } from "../api/comments";
 import { getReactions, upsertReaction, deleteReaction } from "../api/reactions";
 import { uploadFile, getFileUrl } from "../api/files";
@@ -49,6 +50,9 @@ const Home = () => {
   const [postComments, setPostComments] = useState({});
   const [openMenuPostId, setOpenMenuPostId] = useState(null);
   const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
 
   const fileInputRef = useRef(null);
   const menuRefs = useRef({});
@@ -264,6 +268,47 @@ const Home = () => {
     } catch (error) {
       console.error("Error deleting post:", error);
       toast.error("Failed to delete post");
+    }
+  };
+
+  const handleEditPost = (post) => {
+    setEditingPost(post);
+    setEditTitle(post.title);
+    setEditBody(post.body);
+    setOpenMenuPostId(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPost(null);
+    setEditTitle("");
+    setEditBody("");
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editTitle.trim() || !editBody.trim()) {
+      toast.error("Please enter both title and content");
+      return;
+    }
+
+    try {
+      const updated = await updatePost(editingPost._id, {
+        title: editTitle,
+        body: editBody,
+      });
+      setPosts((prev) =>
+        prev.map((p) =>
+          p._id === editingPost._id
+            ? { ...p, title: updated.title, body: updated.body }
+            : p
+        )
+      );
+      setEditingPost(null);
+      setEditTitle("");
+      setEditBody("");
+      toast.success("Post updated successfully");
+    } catch (error) {
+      console.error("Error updating post:", error);
+      toast.error("Failed to update post");
     }
   };
 
@@ -524,6 +569,13 @@ const Home = () => {
                               {openMenuPostId === post._id && (
                                 <div className="menu-dropdown">
                                   <button
+                                    className="menu-item"
+                                    onClick={() => handleEditPost(post)}
+                                  >
+                                    <Edit size={16} />
+                                    Edit Post
+                                  </button>
+                                  <button
                                     className="menu-item delete-item"
                                     onClick={() => {
                                       handleDeletePost(post._id);
@@ -541,13 +593,47 @@ const Home = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="post-content">
-                      <div
-                        className="post-body clickable-post"
-                        onClick={() => navigate(`/posts/${post._id}`)}
-                      >
-                        <h3 className="post-title">{post.title}</h3>
-                        <p className="post-text">{post.body}</p>
-                      </div>
+                      {editingPost?._id === post._id ? (
+                        <div className="edit-post-form">
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="post-title-input"
+                            placeholder="Post title..."
+                          />
+                          <Textarea
+                            value={editBody}
+                            onChange={(e) => setEditBody(e.target.value)}
+                            className="post-textarea"
+                            placeholder="Post content..."
+                          />
+                          <div className="edit-post-actions">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleCancelEdit}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="btn-primary"
+                              onClick={handleSaveEdit}
+                            >
+                              Save
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className="post-body clickable-post"
+                          onClick={() => navigate(`/posts/${post._id}`)}
+                        >
+                          <h3 className="post-title">{post.title}</h3>
+                          <p className="post-text">{post.body}</p>
+                        </div>
+                      )}
 
                       {/* Post Images */}
                       {post.attachmentsId && post.attachmentsId.length > 0 && (
