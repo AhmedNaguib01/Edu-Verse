@@ -1,7 +1,6 @@
 const Message = require("../models/Message");
 const Chat = require("../models/Chat");
 
-// Get messages by chat
 const getMessages = async (req, res) => {
   try {
     const { chatId } = req.query;
@@ -10,7 +9,6 @@ const getMessages = async (req, res) => {
       return res.status(400).json({ error: "chatId is required" });
     }
 
-    // Verify user has access to this chat
     const chat = await Chat.findById(chatId);
     if (!chat) {
       return res.status(404).json({ error: "Chat not found" });
@@ -23,7 +21,6 @@ const getMessages = async (req, res) => {
       return res.status(403).json({ error: "Access denied" });
     }
 
-    // Get messages
     const messages = await Message.find({
       $or: [
         { senderId: chat.user1.id, receiverId: chat.user2.id },
@@ -38,11 +35,9 @@ const getMessages = async (req, res) => {
   }
 };
 
-// Create message
 const createMessage = async (req, res) => {
   try {
-    const { chatId, receiverId, text, attachmentsId, attachment, replyTo } =
-      req.body;
+    const { chatId, receiverId, text, attachmentsId, replyTo } = req.body;
     const senderId = req.userId;
 
     if (!receiverId || !text) {
@@ -51,26 +46,22 @@ const createMessage = async (req, res) => {
         .json({ error: "receiverId and text are required" });
     }
 
-    // Create message
     const message = new Message({
       senderId,
       receiverId,
       text,
       attachmentsId: attachmentsId || [],
-      attachment: attachment || null,
       replyTo: replyTo || null,
     });
 
     await message.save();
 
-    // Get user details for chat
     const User = require("../models/User");
     const [sender, receiver] = await Promise.all([
       User.findById(senderId),
       User.findById(receiverId),
     ]);
 
-    // Update or create chat
     let chat;
     if (chatId) {
       chat = await Chat.findByIdAndUpdate(
@@ -82,7 +73,6 @@ const createMessage = async (req, res) => {
         { new: true }
       );
     } else {
-      // Check if chat exists
       const existingChat = await Chat.findOne({
         $or: [
           { "user1.id": senderId, "user2.id": receiverId },
@@ -100,17 +90,16 @@ const createMessage = async (req, res) => {
           { new: true }
         );
       } else {
-        // Create new chat
         chat = new Chat({
           user1: {
             id: sender._id,
             name: sender.name,
-            image: sender.image ? Buffer.from(sender.image) : null,
+            image: sender.image || {},
           },
           user2: {
             id: receiver._id,
             name: receiver.name,
-            image: receiver.image ? Buffer.from(receiver.image) : null,
+            image: receiver.image || {},
           },
           lastMessage: text.substring(0, 100),
         });
@@ -125,7 +114,6 @@ const createMessage = async (req, res) => {
   }
 };
 
-// Delete message
 const deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -137,7 +125,6 @@ const deleteMessage = async (req, res) => {
       return res.status(404).json({ error: "Message not found" });
     }
 
-    // Only allow sender to delete their own messages
     if (message.senderId.toString() !== userId) {
       return res
         .status(403)

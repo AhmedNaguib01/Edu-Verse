@@ -5,14 +5,9 @@ const commentSchema = new mongoose.Schema({
   sender: {
     id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     name: String,
-    profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: "File" },
+    image: { type: Object, default: {} },
   },
   body: String,
-  parentCommentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Comment",
-    default: null,
-  },
   createdAt: { type: Date, default: Date.now },
 });
 

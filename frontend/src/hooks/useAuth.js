@@ -5,17 +5,12 @@ import { login as loginApi, register as registerApi } from "../api/auth";
 import { toast } from "sonner";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES, ROUTES } from "../constants";
 
-/**
- * Custom hook for authentication
- * Manages user session, login, logout, and registration
- */
 export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Load user session on mount
   useEffect(() => {
     const session = getSession();
     if (session && session.user) {
@@ -25,7 +20,6 @@ export function useAuth() {
     setLoading(false);
   }, []);
 
-  // Login function
   const login = useCallback(
     async (email, password) => {
       try {
@@ -49,7 +43,6 @@ export function useAuth() {
     [navigate]
   );
 
-  // Register function
   const register = useCallback(
     async (name, email, password, level, role) => {
       try {
@@ -73,7 +66,6 @@ export function useAuth() {
     [navigate]
   );
 
-  // Logout function
   const logout = useCallback(() => {
     clearSession();
     setUser(null);
@@ -82,7 +74,6 @@ export function useAuth() {
     navigate(ROUTES.AUTH);
   }, [navigate]);
 
-  // Update user data
   const updateUser = useCallback((userData) => {
     setUser((prev) => ({ ...prev, ...userData }));
   }, []);

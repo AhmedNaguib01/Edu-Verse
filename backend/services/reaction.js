@@ -1,6 +1,5 @@
 const Reaction = require("../models/Reaction");
 
-// Get reactions for a post
 exports.getReactions = async (req, res) => {
   try {
     const { postId } = req.query;
@@ -9,7 +8,6 @@ exports.getReactions = async (req, res) => {
       return res.status(400).json({ error: "postId is required" });
     }
 
-    // Get aggregated reactions
     const mongoose = require("mongoose");
     const ObjectId = mongoose.Types.ObjectId;
 
@@ -30,7 +28,6 @@ exports.getReactions = async (req, res) => {
       reactionSummary[r._id] = r.count;
     });
 
-    // Get user's reaction if authenticated
     let userReaction = null;
     if (req.userId) {
       const reaction = await Reaction.findOne({
@@ -50,7 +47,6 @@ exports.getReactions = async (req, res) => {
   }
 };
 
-// Upsert a reaction (create or update)
 exports.upsertReaction = async (req, res) => {
   try {
     const { postId, type } = req.body;
@@ -70,18 +66,15 @@ exports.upsertReaction = async (req, res) => {
       return res.status(400).json({ error: "Invalid reaction type" });
     }
 
-    // Find existing reaction
     let reaction = await Reaction.findOne({
       postId: new ObjectId(postId),
       senderId: new ObjectId(req.userId),
     });
 
     if (reaction) {
-      // Update existing reaction
       reaction.type = type.toLowerCase();
       await reaction.save();
     } else {
-      // Create new reaction
       reaction = new Reaction({
         postId: new ObjectId(postId),
         senderId: new ObjectId(req.userId),
@@ -98,7 +91,6 @@ exports.upsertReaction = async (req, res) => {
   }
 };
 
-// Delete a reaction
 exports.deleteReaction = async (req, res) => {
   try {
     const { postId } = req.params;

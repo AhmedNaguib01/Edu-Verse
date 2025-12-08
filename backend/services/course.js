@@ -1,7 +1,6 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
 
-// Get all courses
 exports.getAllCourses = async (req, res) => {
   try {
     const { limit = 100, skip = 0 } = req.query;
@@ -20,7 +19,6 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
-// Get course by ID
 exports.getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -40,7 +38,6 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
-// Create a course
 exports.createCourse = async (req, res) => {
   try {
     const { _id, name, creditHours, description } = req.body;
@@ -49,7 +46,6 @@ exports.createCourse = async (req, res) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    // Check if user is an instructor
     if (req.userRole !== "instructor" && req.userRole !== "admin") {
       return res
         .status(403)
@@ -72,7 +68,6 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-// Update a course
 exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,7 +79,6 @@ exports.updateCourse = async (req, res) => {
       return res.status(404).json({ error: "Course not found" });
     }
 
-    // Check if user is an instructor of this course
     if (
       req.user &&
       !course.instructorId.some(
@@ -108,7 +102,6 @@ exports.updateCourse = async (req, res) => {
   }
 };
 
-// Delete a course
 exports.deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -117,7 +110,6 @@ exports.deleteCourse = async (req, res) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    // Check if user is an instructor
     if (req.userRole !== "instructor" && req.userRole !== "admin") {
       return res
         .status(403)
@@ -130,7 +122,6 @@ exports.deleteCourse = async (req, res) => {
       return res.status(404).json({ error: "Course not found" });
     }
 
-    // Check if user is an instructor of this course
     const isInstructor = course.instructorId.some(
       (instId) => instId.toString() === req.userId.toString()
     );
@@ -149,7 +140,6 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
-// Enroll a student in a course
 exports.enrollStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -161,7 +151,6 @@ exports.enrollStudent = async (req, res) => {
       return res.status(404).json({ error: "Course not found" });
     }
 
-    // Check capacity
     if (course.enrolled >= course.capacity) {
       return res.status(400).json({ error: "Course is full" });
     }
@@ -172,16 +161,13 @@ exports.enrollStudent = async (req, res) => {
       return res.status(404).json({ error: "Student not found" });
     }
 
-    // Check if already enrolled
     if (student.courses.includes(id)) {
       return res.status(400).json({ error: "Already enrolled in this course" });
     }
 
-    // Add course to student's courses array
     student.courses.push(id);
     await student.save();
 
-    // Increment enrolled count
     course.enrolled = (course.enrolled || 0) + 1;
     await course.save();
 
@@ -192,7 +178,6 @@ exports.enrollStudent = async (req, res) => {
   }
 };
 
-// Unenroll a student from a course
 exports.unenrollStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -210,11 +195,9 @@ exports.unenrollStudent = async (req, res) => {
       return res.status(404).json({ error: "Student not found" });
     }
 
-    // Remove course from student's courses array
     student.courses = student.courses.filter((courseId) => courseId !== id);
     await student.save();
 
-    // Decrement enrolled count
     if (course.enrolled > 0) {
       course.enrolled -= 1;
       await course.save();
@@ -227,8 +210,6 @@ exports.unenrollStudent = async (req, res) => {
   }
 };
 
-
-// Get enrolled courses for a user
 exports.getEnrolledCourses = async (req, res) => {
   try {
     const { userId } = req.query;

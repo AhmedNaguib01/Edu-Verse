@@ -1,16 +1,9 @@
-/**
- * Application Constants
- * Centralized location for all constant values
- */
-
-// API Configuration
 export const API_CONFIG = {
   BASE_URL: process.env.REACT_APP_API_URL || "http://localhost:5000",
   TIMEOUT: 30000,
   RETRY_ATTEMPTS: 3,
 };
 
-// Pagination
 export const PAGINATION = {
   DEFAULT_PAGE: 1,
   DEFAULT_LIMIT: 20,
@@ -20,22 +13,19 @@ export const PAGINATION = {
   COURSES_PER_PAGE: 50,
 };
 
-// Cache Configuration
 export const CACHE_CONFIG = {
-  USER_PROFILE_TTL: 5 * 60 * 1000, // 5 minutes
-  SEARCH_RESULTS_TTL: 1 * 60 * 1000, // 1 minute
-  POSTS_TTL: 2 * 60 * 1000, // 2 minutes
-  COURSES_TTL: 5 * 60 * 1000, // 5 minutes
+  USER_PROFILE_TTL: 5 * 60 * 1000,
+  SEARCH_RESULTS_TTL: 1 * 60 * 1000,
+  POSTS_TTL: 2 * 60 * 1000,
+  COURSES_TTL: 5 * 60 * 1000,
 };
 
-// Debounce Delays
 export const DEBOUNCE_DELAYS = {
   SEARCH: 300,
   INPUT: 500,
   SCROLL: 100,
 };
 
-// Post Types
 export const POST_TYPES = {
   DISCUSSION: "discussion",
   QUESTION: "question",
@@ -50,7 +40,6 @@ export const POST_TYPE_OPTIONS = [
   { value: POST_TYPES.EVENT, label: "Event" },
 ];
 
-// Reaction Types
 export const REACTION_TYPES = {
   LIKE: "like",
   LOVE: "love",
@@ -59,7 +48,6 @@ export const REACTION_TYPES = {
   SAD: "sad",
 };
 
-// User Roles
 export const USER_ROLES = {
   STUDENT: "student",
   INSTRUCTOR: "instructor",
@@ -71,9 +59,8 @@ export const USER_ROLE_OPTIONS = [
   { value: USER_ROLES.INSTRUCTOR, label: "Instructor" },
 ];
 
-// File Upload
 export const FILE_UPLOAD = {
-  MAX_SIZE: 10 * 1024 * 1024, // 10MB
+  MAX_SIZE: 10 * 1024 * 1024,
   ALLOWED_IMAGE_TYPES: ["image/jpeg", "image/png", "image/gif", "image/webp"],
   ALLOWED_DOCUMENT_TYPES: [
     "application/pdf",
@@ -83,7 +70,6 @@ export const FILE_UPLOAD = {
   MAX_IMAGES_PER_POST: 5,
 };
 
-// Routes
 export const ROUTES = {
   HOME: "/",
   AUTH: "/auth",
@@ -95,7 +81,6 @@ export const ROUTES = {
   POST_DETAILS: "/posts/:postId",
 };
 
-// Local Storage Keys
 export const STORAGE_KEYS = {
   TOKEN: "token",
   USER: "user",
@@ -103,7 +88,6 @@ export const STORAGE_KEYS = {
   LANGUAGE: "language",
 };
 
-// Error Messages
 export const ERROR_MESSAGES = {
   NETWORK_ERROR: "Network error. Please check your connection.",
   UNAUTHORIZED: "You are not authorized to perform this action.",
@@ -116,7 +100,6 @@ export const ERROR_MESSAGES = {
   INVALID_FILE_TYPE: "Invalid file type. Please upload a supported file.",
 };
 
-// Success Messages
 export const SUCCESS_MESSAGES = {
   POST_CREATED: "Post created successfully!",
   POST_DELETED: "Post deleted successfully!",
@@ -127,7 +110,6 @@ export const SUCCESS_MESSAGES = {
   LOGOUT_SUCCESS: "Logged out successfully!",
 };
 
-// UI Configuration
 export const UI_CONFIG = {
   TOAST_DURATION: 3000,
   ANIMATION_DURATION: 300,
@@ -139,15 +121,13 @@ export const UI_CONFIG = {
   },
 };
 
-// Date Formats
 export const DATE_FORMATS = {
   FULL: "MMMM DD, YYYY HH:mm",
   SHORT: "MMM DD, YYYY",
   TIME: "HH:mm",
-  RELATIVE: "relative", // Use relative time (e.g., "2 hours ago")
+  RELATIVE: "relative",
 };
 
-// Validation Rules
 export const VALIDATION = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   PASSWORD_MIN_LENGTH: 6,

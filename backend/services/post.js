@@ -2,7 +2,6 @@ const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const Reaction = require("../models/Reaction");
 
-// Get all posts with optional filtering
 exports.getAllPosts = async (req, res) => {
   try {
     const { courseId, type, limit = 50, skip = 0 } = req.query;
@@ -20,9 +19,10 @@ exports.getAllPosts = async (req, res) => {
       .skip(parseInt(skip))
       .lean();
 
-    // Get fresh user data for all post senders
     const User = require("../models/User");
-    const userIds = [...new Set(posts.map((p) => p.sender?.id?.toString()).filter(Boolean))];
+    const userIds = [
+      ...new Set(posts.map((p) => p.sender?.id?.toString()).filter(Boolean)),
+    ];
     const users = await User.find({ _id: { $in: userIds } })
       .select("_id name profilePicture")
       .lean();
@@ -32,7 +32,6 @@ exports.getAllPosts = async (req, res) => {
       userMap[u._id.toString()] = u;
     });
 
-    // Update posts with fresh user data
     const updatedPosts = posts.map((post) => {
       if (post.sender?.id) {
         const userData = userMap[post.sender.id.toString()];
@@ -57,7 +56,6 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
-// Get post by ID with reactions and comments
 exports.getPostById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,20 +73,17 @@ exports.getPostById = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    // Get comments with sender info
     const comments = await Comment.find({ postId: id })
       .select("body sender createdAt")
       .sort({ createdAt: 1 })
       .lean();
 
-    // Collect all user IDs (post sender + comment senders)
     const userIds = new Set();
     if (post.sender?.id) userIds.add(post.sender.id.toString());
     comments.forEach((c) => {
       if (c.sender?.id) userIds.add(c.sender.id.toString());
     });
 
-    // Fetch fresh user data
     const users = await User.find({ _id: { $in: Array.from(userIds) } })
       .select("_id name profilePicture")
       .lean();
@@ -98,7 +93,6 @@ exports.getPostById = async (req, res) => {
       userMap[u._id.toString()] = u;
     });
 
-    // Update post with fresh user data
     const updatedPost = { ...post };
     if (post.sender?.id) {
       const userData = userMap[post.sender.id.toString()];
@@ -111,7 +105,6 @@ exports.getPostById = async (req, res) => {
       }
     }
 
-    // Update comments with fresh user data
     const updatedComments = comments.map((comment) => {
       if (comment.sender?.id) {
         const userData = userMap[comment.sender.id.toString()];
@@ -129,7 +122,6 @@ exports.getPostById = async (req, res) => {
       return comment;
     });
 
-    // Get reactions aggregated
     const reactions = await Reaction.aggregate([
       { $match: { postId: new ObjectId(id) } },
       { $group: { _id: "$type", count: { $sum: 1 } } },
@@ -147,7 +139,6 @@ exports.getPostById = async (req, res) => {
       reactionSummary[r._id] = r.count;
     });
 
-    // Get user's reaction if authenticated
     let userReaction = null;
     if (req.user) {
       const reaction = await Reaction.findOne({
@@ -171,7 +162,6 @@ exports.getPostById = async (req, res) => {
   }
 };
 
-// Create a new post
 exports.createPost = async (req, res) => {
   try {
     const { courseId, title, body, type, attachmentsId, image } = req.body;
@@ -180,7 +170,6 @@ exports.createPost = async (req, res) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    // Get user info
     const User = require("../models/User");
     const user = await User.findById(req.userId);
 
@@ -215,7 +204,6 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Update a post
 exports.updatePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -227,7 +215,6 @@ exports.updatePost = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    // Check if user owns the post
     if (req.user && post.sender.id.toString() !== req.user._id.toString()) {
       return res
         .status(403)
@@ -246,8 +233,6 @@ exports.updatePost = async (req, res) => {
   }
 };
 
-
-// Delete a post
 exports.deletePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -258,14 +243,12 @@ exports.deletePost = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    // Check if user owns the post
     if (req.user && post.sender.id.toString() !== req.user._id.toString()) {
       return res
         .status(403)
         .json({ error: "Not authorized to delete this post" });
     }
 
-    // Delete associated comments and reactions
     await Comment.deleteMany({ postId: id });
     await Reaction.deleteMany({ postId: id });
 

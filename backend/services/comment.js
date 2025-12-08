@@ -1,6 +1,5 @@
 const Comment = require("../models/Comment");
 
-// Get comments for a post
 exports.getComments = async (req, res) => {
   try {
     const { postId } = req.query;
@@ -9,11 +8,14 @@ exports.getComments = async (req, res) => {
       return res.status(400).json({ error: "postId is required" });
     }
 
-    const comments = await Comment.find({ postId }).sort({ createdAt: 1 }).lean();
+    const comments = await Comment.find({ postId })
+      .sort({ createdAt: 1 })
+      .lean();
 
-    // Get fresh user data for all comment senders
     const User = require("../models/User");
-    const userIds = [...new Set(comments.map((c) => c.sender?.id?.toString()).filter(Boolean))];
+    const userIds = [
+      ...new Set(comments.map((c) => c.sender?.id?.toString()).filter(Boolean)),
+    ];
     const users = await User.find({ _id: { $in: userIds } })
       .select("_id name profilePicture")
       .lean();
@@ -23,7 +25,6 @@ exports.getComments = async (req, res) => {
       userMap[u._id.toString()] = u;
     });
 
-    // Update comments with fresh user data
     const updatedComments = comments.map((comment) => {
       if (comment.sender?.id) {
         const userData = userMap[comment.sender.id.toString()];
@@ -48,7 +49,6 @@ exports.getComments = async (req, res) => {
   }
 };
 
-// Create a comment
 exports.createComment = async (req, res) => {
   try {
     const { postId, body, parentCommentId } = req.body;
@@ -61,7 +61,6 @@ exports.createComment = async (req, res) => {
       return res.status(400).json({ error: "postId and body are required" });
     }
 
-    // Get user info
     const User = require("../models/User");
     const user = await User.findById(req.userId);
 
@@ -89,7 +88,6 @@ exports.createComment = async (req, res) => {
   }
 };
 
-// Delete a comment
 exports.deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -100,7 +98,6 @@ exports.deleteComment = async (req, res) => {
       return res.status(404).json({ error: "Comment not found" });
     }
 
-    // Check if user owns the comment
     if (req.userId && comment.sender.id.toString() !== req.userId.toString()) {
       return res
         .status(403)

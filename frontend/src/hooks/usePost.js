@@ -6,10 +6,6 @@ import { uploadFile } from "../api/files";
 import { toast } from "sonner";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "../constants";
 
-/**
- * Custom hook for managing posts
- * Handles loading, creating, deleting posts and their interactions
- */
 export function usePost() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,14 +13,12 @@ export function usePost() {
   const [postReactions, setPostReactions] = useState({});
   const [postComments, setPostComments] = useState({});
 
-  // Load all posts
   const loadPosts = useCallback(async (courseId = null) => {
     try {
       setLoading(true);
       const data = await getAllPosts(courseId);
       setPosts(data || []);
 
-      // Load reactions and comments for each post
       if (data && data.length > 0) {
         data.forEach((post) => {
           loadPostReactions(post._id);
@@ -45,7 +39,6 @@ export function usePost() {
     }
   }, []);
 
-  // Load reactions for a specific post
   const loadPostReactions = useCallback(async (postId) => {
     try {
       const data = await getReactions(postId);
@@ -58,7 +51,6 @@ export function usePost() {
     }
   }, []);
 
-  // Load comments for a specific post
   const loadPostComments = useCallback(async (postId) => {
     try {
       const data = await getComments(postId);
@@ -71,19 +63,16 @@ export function usePost() {
     }
   }, []);
 
-  // Create a new post
   const handleCreatePost = useCallback(async (postData, images = []) => {
     try {
       setCreating(true);
 
-      // Upload images first
       const uploadedFileIds = [];
       for (const image of images) {
         const uploadedFile = await uploadFile(image);
         uploadedFileIds.push(uploadedFile._id);
       }
 
-      // Create post with uploaded file IDs
       const newPost = await createPost({
         ...postData,
         attachmentsId: uploadedFileIds,
@@ -101,7 +90,6 @@ export function usePost() {
     }
   }, []);
 
-  // Delete a post
   const handleDeletePost = useCallback(async (postId) => {
     try {
       await deletePost(postId);
@@ -114,7 +102,6 @@ export function usePost() {
     }
   }, []);
 
-  // Handle reaction (add/remove/update)
   const handleReaction = useCallback(
     async (postId, type) => {
       try {
@@ -135,7 +122,6 @@ export function usePost() {
     [postReactions, loadPostReactions]
   );
 
-  // Add a comment
   const handleAddComment = useCallback(
     async (postId, commentText) => {
       if (!commentText || !commentText.trim()) {

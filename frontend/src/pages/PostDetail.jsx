@@ -67,6 +67,14 @@ const PostDetail = () => {
     return () => clearInterval(refreshInterval);
   }, [postId]);
 
+  const getAvatarSrc = (item) => {
+    if (!item) return null;
+    if (item.image && item.image.fileId) return getFileUrl(item.image.fileId);
+    if (item.image && item.image.url) return item.image.url;
+    if (item.profilePicture) return getFileUrl(item.profilePicture);
+    return null;
+  };
+
   const loadPost = async () => {
     try {
       setLoading(true);
@@ -175,7 +183,11 @@ const PostDetail = () => {
         title: editTitle,
         body: editBody,
       });
-      setPost((prev) => ({ ...prev, title: updated.title, body: updated.body }));
+      setPost((prev) => ({
+        ...prev,
+        title: updated.title,
+        body: updated.body,
+      }));
       setIsEditing(false);
       toast.success("Post updated successfully");
     } catch (error) {
@@ -253,9 +265,9 @@ const PostDetail = () => {
                     onClick={() => navigate(`/profile/${post.sender?.id}`)}
                     style={{ cursor: "pointer" }}
                   >
-                    {post.sender?.profilePicture ? (
+                    {getAvatarSrc(post.sender) ? (
                       <img
-                        src={getFileUrl(post.sender.profilePicture)}
+                        src={getAvatarSrc(post.sender)}
                         alt={post.sender.name}
                         className="avatar-img"
                       />
@@ -350,7 +362,9 @@ const PostDetail = () => {
                 </div>
               ) : (
                 <div className="post-body">
-                  <h1 className="post-title">{post.title || "Untitled Post"}</h1>
+                  <h1 className="post-title">
+                    {post.title || "Untitled Post"}
+                  </h1>
                   <p className="post-text">
                     {post.body || "No content available"}
                   </p>
@@ -416,9 +430,9 @@ const PostDetail = () => {
                           }
                           style={{ cursor: "pointer" }}
                         >
-                          {comment.sender.profilePicture ? (
+                          {getAvatarSrc(comment.sender) ? (
                             <img
-                              src={getFileUrl(comment.sender.profilePicture)}
+                              src={getAvatarSrc(comment.sender)}
                               alt={comment.sender.name}
                               className="avatar-img"
                             />
@@ -451,9 +465,9 @@ const PostDetail = () => {
 
                 <form onSubmit={handleAddComment} className="add-comment">
                   <Avatar>
-                    {user?.profilePicture ? (
+                    {getAvatarSrc(user) ? (
                       <img
-                        src={getFileUrl(user.profilePicture)}
+                        src={getAvatarSrc(user)}
                         alt={user.name}
                         className="avatar-img"
                       />

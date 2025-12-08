@@ -1,11 +1,9 @@
 import { clsx } from "clsx";
 
-// Merge class names
 export function cn(...inputs) {
   return clsx(inputs);
 }
 
-// Get initials from name
 export function getInitials(name) {
   if (!name) return "U";
   return name
@@ -16,7 +14,6 @@ export function getInitials(name) {
     .slice(0, 2);
 }
 
-// Format date
 export function formatDate(date) {
   if (!date) return "";
   const d = new Date(date);
@@ -27,7 +24,6 @@ export function formatDate(date) {
   });
 }
 
-// Format date with time
 export function formatDateTime(date) {
   if (!date) return "";
   const d = new Date(date);
@@ -40,7 +36,6 @@ export function formatDateTime(date) {
   });
 }
 
-// Format relative time (e.g., "2 hours ago")
 export function formatRelativeTime(date) {
   if (!date) return "";
   const d = new Date(date);
@@ -74,13 +69,11 @@ export function formatRelativeTime(date) {
   return formatDate(date);
 }
 
-// Validate email
 export function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
 
-// Truncate text
 export function truncate(text, length = 100) {
   if (!text) return "";
   if (text.length <= length) return text;

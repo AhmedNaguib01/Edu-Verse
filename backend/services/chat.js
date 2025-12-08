@@ -2,7 +2,6 @@ const Chat = require("../models/Chat");
 const Message = require("../models/Message");
 const User = require("../models/User");
 
-// Get all chats for current user (OPTIMIZED)
 const getAllChats = async (req, res) => {
   try {
     const userId = req.userId;
@@ -10,7 +9,6 @@ const getAllChats = async (req, res) => {
     const skip = (page - 1) * limit;
     const limitNum = Math.min(parseInt(limit), 100);
 
-    // Find all chats where user is either user1 or user2
     const [chats, total] = await Promise.all([
       Chat.find({
         $or: [{ "user1.id": userId }, { "user2.id": userId }],
@@ -24,14 +22,12 @@ const getAllChats = async (req, res) => {
       }),
     ]);
 
-    // Get all unique user IDs from chats
     const userIds = new Set();
     chats.forEach((chat) => {
       userIds.add(chat.user1.id.toString());
       userIds.add(chat.user2.id.toString());
     });
 
-    // Fetch fresh user data
     const users = await User.find({ _id: { $in: Array.from(userIds) } })
       .select("_id name profilePicture")
       .lean();
@@ -41,7 +37,6 @@ const getAllChats = async (req, res) => {
       userMap[u._id.toString()] = u;
     });
 
-    // Update chat objects with fresh user names
     const updatedChats = chats.map((chat) => {
       const user1Data = userMap[chat.user1.id.toString()];
       const user2Data = userMap[chat.user2.id.toString()];
@@ -60,11 +55,10 @@ const getAllChats = async (req, res) => {
       };
     });
 
-    // Prevent caching to always get fresh data
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
-    
+
     res.json({
       chats: updatedChats,
       pagination: {
@@ -80,7 +74,6 @@ const getAllChats = async (req, res) => {
   }
 };
 
-// Get chat by ID (OPTIMIZED)
 const getChatById = async (req, res) => {
   try {
     const chat = await Chat.findById(req.params.id).lean();
@@ -88,7 +81,6 @@ const getChatById = async (req, res) => {
       return res.status(404).json({ error: "Chat not found" });
     }
 
-    // Check if user is part of this chat
     if (
       chat.user1.id.toString() !== req.userId &&
       chat.user2.id.toString() !== req.userId
@@ -96,7 +88,6 @@ const getChatById = async (req, res) => {
       return res.status(403).json({ error: "Access denied" });
     }
 
-    // Fetch fresh user data
     const [user1Data, user2Data] = await Promise.all([
       User.findById(chat.user1.id).select("_id name profilePicture").lean(),
       User.findById(chat.user2.id).select("_id name profilePicture").lean(),
@@ -116,7 +107,6 @@ const getChatById = async (req, res) => {
       },
     };
 
-    // Prevent caching to always get fresh data
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
@@ -127,7 +117,6 @@ const getChatById = async (req, res) => {
   }
 };
 
-// Create or get existing chat
 const createChat = async (req, res) => {
   try {
     const { user2Id } = req.body;
@@ -143,7 +132,6 @@ const createChat = async (req, res) => {
         .json({ error: "Cannot create chat with yourself" });
     }
 
-    // Check if chat already exists
     const existingChat = await Chat.findOne({
       $or: [
         { "user1.id": user1Id, "user2.id": user2Id },
@@ -152,10 +140,13 @@ const createChat = async (req, res) => {
     }).lean();
 
     if (existingChat) {
-      // Fetch fresh user data
       const [user1Data, user2Data] = await Promise.all([
-        User.findById(existingChat.user1.id).select("_id name profilePicture").lean(),
-        User.findById(existingChat.user2.id).select("_id name profilePicture").lean(),
+        User.findById(existingChat.user1.id)
+          .select("_id name profilePicture")
+          .lean(),
+        User.findById(existingChat.user2.id)
+          .select("_id name profilePicture")
+          .lean(),
       ]);
 
       const updatedChat = {
@@ -175,7 +166,6 @@ const createChat = async (req, res) => {
       return res.json(updatedChat);
     }
 
-    // Get user details
     const user1 = await User.findById(user1Id);
     const user2 = await User.findById(user2Id);
 
@@ -183,7 +173,6 @@ const createChat = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Create new chat
     const chat = new Chat({
       user1: {
         id: user1._id,

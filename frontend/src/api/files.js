@@ -1,17 +1,10 @@
 import apiClient from "./client";
 
 // Upload file
-export const uploadFile = async (
-  file,
-  courseId = null,
-  postId = null,
-  messageId = null
-) => {
+export const uploadFile = async (file, courseId = null) => {
   const formData = new FormData();
   formData.append("file", file);
   if (courseId) formData.append("courseId", courseId);
-  if (postId) formData.append("postId", postId);
-  if (messageId) formData.append("messageId", messageId);
 
   const response = await apiClient.post("/files", formData, {
     headers: {

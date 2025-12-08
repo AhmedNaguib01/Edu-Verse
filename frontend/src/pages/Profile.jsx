@@ -87,6 +87,14 @@ const Profile = () => {
     }
   }, [userId, searchParams]);
 
+  const getAvatarSrc = (item) => {
+    if (!item) return null;
+    if (item.image && item.image.fileId) return getFileUrl(item.image.fileId);
+    if (item.image && item.image.url) return item.image.url;
+    if (item.profilePicture) return getFileUrl(item.profilePicture);
+    return null;
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -172,7 +180,7 @@ const Profile = () => {
     try {
       setUpdating(true);
 
-      let profilePicId = profileUser.profilePicture;
+      let profilePicId = profileUser?.profilePicture || null;
 
       // Upload profile picture if selected
       if (profilePicFile) {
@@ -180,12 +188,14 @@ const Profile = () => {
         profilePicId = uploadedFile._id;
       }
 
-      // Build update data
+      // Build update data; store `image` as an object referencing the file id
       const updateData = {
         name: editForm.name,
         email: editForm.email,
         level: editForm.level,
-        profilePicture: profilePicId,
+        image: profilePicId
+          ? { fileId: profilePicId }
+          : profileUser.image || {},
       };
 
       // Only include password if it's been changed
@@ -251,9 +261,9 @@ const Profile = () => {
             <div className="profile-header">
               <Avatar className="profile-avatar">
                 <AvatarFallback className="avatar-fallback-primary profile-avatar-fallback">
-                  {profileUser?.profilePicture ? (
+                  {getAvatarSrc(profileUser) ? (
                     <img
-                      src={getFileUrl(profileUser.profilePicture)}
+                      src={getAvatarSrc(profileUser)}
                       alt={profileUser.name}
                       className="profile-avatar-img"
                     />
@@ -460,12 +470,9 @@ const Profile = () => {
                 <label className="form-label">Profile Picture</label>
                 <div className="profile-pic-upload">
                   <div className="profile-pic-preview">
-                    {profilePicPreview || profileUser?.profilePicture ? (
+                    {profilePicPreview || getAvatarSrc(profileUser) ? (
                       <img
-                        src={
-                          profilePicPreview ||
-                          getFileUrl(profileUser.profilePicture)
-                        }
+                        src={profilePicPreview || getAvatarSrc(profileUser)}
                         alt="Profile preview"
                         className="preview-img"
                       />

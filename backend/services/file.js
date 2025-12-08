@@ -1,15 +1,13 @@
 const File = require("../models/File");
 
-// Upload file
 const uploadFile = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { courseId, postId, messageId } = req.body;
+    const { courseId } = req.body;
 
-    // Validate file type
     const allowedTypes = [
       "image/jpeg",
       "image/png",
@@ -27,13 +25,11 @@ const uploadFile = async (req, res) => {
       });
     }
 
-    // Validate file size (10MB max)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
     if (req.file.size > maxSize) {
       return res.status(413).json({ error: "File size exceeds 10MB limit" });
     }
 
-    // Determine file type
     let fileType = "image";
     if (req.file.mimetype === "application/pdf") {
       fileType = "pdf";
@@ -45,14 +41,12 @@ const uploadFile = async (req, res) => {
       fileType = "word";
     }
 
-    // Create file record
     const file = new File({
       fileName: req.file.originalname,
       fileType,
       fileData: req.file.buffer,
+      size: req.file.size,
       courseId: courseId || null,
-      postId: postId || null,
-      messageId: messageId || null,
     });
 
     await file.save();
@@ -66,15 +60,12 @@ const uploadFile = async (req, res) => {
     });
   } catch (error) {
     console.error("Upload file error:", error);
-    console.error("Error details:", error.message);
-    console.error("Error stack:", error.stack);
     res
       .status(500)
       .json({ error: "Server error during file upload: " + error.message });
   }
 };
 
-// Download file
 const downloadFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -83,7 +74,6 @@ const downloadFile = async (req, res) => {
       return res.status(404).json({ error: "File not found" });
     }
 
-    // Set content type
     let contentType = "application/octet-stream";
     if (file.fileType === "image") {
       contentType = "image/jpeg";
@@ -106,7 +96,6 @@ const downloadFile = async (req, res) => {
   }
 };
 
-// Get files by course
 const getFilesByCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -115,13 +104,12 @@ const getFilesByCourse = async (req, res) => {
       "_id fileName fileType createdAt"
     );
 
-    // Add size information (approximate from buffer length)
     const filesWithSize = files.map((file) => ({
       _id: file._id,
       fileName: file.fileName,
       fileType: file.fileType,
       createdAt: file.createdAt,
-      size: file.fileData ? file.fileData.length : 0,
+      size: file.size || (file.fileData ? file.fileData.length : 0),
     }));
 
     res.json(filesWithSize);
@@ -131,7 +119,6 @@ const getFilesByCourse = async (req, res) => {
   }
 };
 
-// Delete file
 const deleteFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -140,7 +127,6 @@ const deleteFile = async (req, res) => {
       return res.status(404).json({ error: "File not found" });
     }
 
-    // Only allow instructors or file owner to delete
     if (req.userRole !== "instructor" && req.userRole !== "admin") {
       return res
         .status(403)

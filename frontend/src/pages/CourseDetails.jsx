@@ -47,6 +47,14 @@ import { getFileUrl } from "../api/files";
 import { toast } from "sonner";
 import "../styles/course-details.css";
 
+const getAvatarSrc = (item) => {
+  if (!item) return null;
+  if (item.image && item.image.fileId) return getFileUrl(item.image.fileId);
+  if (item.image && item.image.url) return item.image.url;
+  if (item.profilePicture) return getFileUrl(item.profilePicture);
+  return null;
+};
+
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -100,9 +108,16 @@ const CourseDetails = () => {
 
       // Check if user is instructor of this course
       if (currentUser && currentUser.role === "instructor") {
-        const isTeaching = courseData.instructorId?.some(
-          (instructor) => instructor._id === currentUser._id
-        );
+        let isTeaching = false;
+        if (Array.isArray(courseData.instructorId)) {
+          isTeaching = courseData.instructorId.some(
+            (instructor) => instructor._id === currentUser._id
+          );
+        } else if (courseData.instructorId) {
+          isTeaching =
+            courseData.instructorId._id === currentUser._id ||
+            courseData.instructorId === currentUser._id;
+        }
         setIsInstructor(isTeaching);
       }
 
@@ -687,9 +702,9 @@ const CourseDetails = () => {
                               }}
                               style={{ cursor: "pointer" }}
                             >
-                              {post.sender.profilePicture ? (
+                              {getAvatarSrc(post.sender) ? (
                                 <img
-                                  src={getFileUrl(post.sender.profilePicture)}
+                                  src={getAvatarSrc(post.sender)}
                                   alt={post.sender.name}
                                   className="avatar-img"
                                 />
@@ -797,11 +812,9 @@ const CourseDetails = () => {
                                     }}
                                     style={{ cursor: "pointer" }}
                                   >
-                                    {comment.sender.profilePicture ? (
+                                    {getAvatarSrc(comment.sender) ? (
                                       <img
-                                        src={getFileUrl(
-                                          comment.sender.profilePicture
-                                        )}
+                                        src={getAvatarSrc(comment.sender)}
                                         alt={comment.sender.name}
                                         className="avatar-img"
                                       />
@@ -838,10 +851,10 @@ const CourseDetails = () => {
 
                             <div className="add-comment">
                               <Avatar>
-                                {user?.profilePicture ? (
+                                {getAvatarSrc(user) ? (
                                   <img
-                                    src={getFileUrl(user.profilePicture)}
-                                    alt={user.name}
+                                    src={getAvatarSrc(user)}
+                                    alt={user?.name}
                                     className="avatar-img"
                                   />
                                 ) : (

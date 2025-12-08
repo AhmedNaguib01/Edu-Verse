@@ -1,16 +1,11 @@
 import { useState, useCallback } from "react";
 
-/**
- * Custom hook for form management
- * Handles form state, validation, and submission
- */
 export function useForm(initialValues = {}, onSubmit, validate) {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle input change
   const handleChange = useCallback(
     (e) => {
       const { name, value, type, checked } = e.target;
@@ -21,7 +16,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
         [name]: newValue,
       }));
 
-      // Clear error when user starts typing
       if (errors[name]) {
         setErrors((prev) => ({
           ...prev,
@@ -32,7 +26,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
     [errors]
   );
 
-  // Handle input blur
   const handleBlur = useCallback(
     (e) => {
       const { name } = e.target;
@@ -41,7 +34,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
         [name]: true,
       }));
 
-      // Validate field on blur if validation function provided
       if (validate) {
         const fieldErrors = validate(values);
         if (fieldErrors[name]) {
@@ -55,18 +47,15 @@ export function useForm(initialValues = {}, onSubmit, validate) {
     [values, validate]
   );
 
-  // Handle form submission
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
 
-      // Validate all fields
       if (validate) {
         const validationErrors = validate(values);
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length > 0) {
-          // Mark all fields as touched to show errors
           const allTouched = Object.keys(values).reduce((acc, key) => {
             acc[key] = true;
             return acc;
@@ -76,7 +65,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
         }
       }
 
-      // Submit form
       try {
         setIsSubmitting(true);
         await onSubmit(values);
@@ -89,7 +77,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
     [values, validate, onSubmit]
   );
 
-  // Reset form
   const reset = useCallback(() => {
     setValues(initialValues);
     setErrors({});
@@ -97,7 +84,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
     setIsSubmitting(false);
   }, [initialValues]);
 
-  // Set specific field value
   const setFieldValue = useCallback((name, value) => {
     setValues((prev) => ({
       ...prev,
@@ -105,7 +91,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
     }));
   }, []);
 
-  // Set specific field error
   const setFieldError = useCallback((name, error) => {
     setErrors((prev) => ({
       ...prev,
@@ -128,9 +113,6 @@ export function useForm(initialValues = {}, onSubmit, validate) {
   };
 }
 
-/**
- * Common validation functions
- */
 export const validators = {
   required: (value) => {
     if (!value || (typeof value === "string" && !value.trim())) {
@@ -176,9 +158,6 @@ export const validators = {
   },
 };
 
-/**
- * Compose multiple validators
- */
 export function composeValidators(...validators) {
   return (value, values) => {
     for (const validator of validators) {

@@ -1,9 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
-/**
- * Custom hook for infinite scrolling
- * Automatically loads more data when user scrolls near bottom
- */
 export function useInfiniteScroll({
   fetchData,
   initialPage = 1,
@@ -16,7 +12,6 @@ export function useInfiniteScroll({
   const [error, setError] = useState(null);
   const observerRef = useRef(null);
 
-  // Load more data
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
 
@@ -30,7 +25,6 @@ export function useInfiniteScroll({
         setData((prev) => [...prev, ...result.data]);
         setPage((prev) => prev + 1);
 
-        // Check if there's more data
         if (result.pagination) {
           setHasMore(result.pagination.page < result.pagination.pages);
         } else {
@@ -47,7 +41,6 @@ export function useInfiniteScroll({
     }
   }, [fetchData, page, loading, hasMore]);
 
-  // Reset to initial state
   const reset = useCallback(() => {
     setData([]);
     setPage(initialPage);
@@ -55,7 +48,6 @@ export function useInfiniteScroll({
     setError(null);
   }, [initialPage]);
 
-  // Intersection Observer for automatic loading
   const lastElementRef = useCallback(
     (node) => {
       if (loading) return;
@@ -82,7 +74,6 @@ export function useInfiniteScroll({
     [loading, hasMore, loadMore, threshold]
   );
 
-  // Initial load
   useEffect(() => {
     if (data.length === 0 && !loading) {
       loadMore();
@@ -100,10 +91,6 @@ export function useInfiniteScroll({
   };
 }
 
-/**
- * Custom hook for scroll-based pagination
- * Detects when user scrolls near bottom of container
- */
 export function useScrollPagination({
   onLoadMore,
   threshold = 200,
@@ -130,7 +117,6 @@ export function useScrollPagination({
       }
     };
 
-    // Throttle scroll events
     let ticking = false;
     const throttledScroll = () => {
       if (!ticking) {

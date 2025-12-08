@@ -1,0 +1,117 @@
+use EduVerseD1
+
+db.users.insertMany([
+  { _id: "1", name: "Dr. Ahmed Hassan", email: "ahmed.hassan@gmail.com", password: "$2b$10$hashedpassword1", role: "instructor", level: "Professor", image: {}, createdAt: ISODate("2024-01-15") },
+  { _id: "2", name: "Dr. Sarah Mohamed", email: "sarah.mohamed@gmail.com", password: "$2b$10$hashedpassword2", role: "instructor", level: "Associate Professor", image: {}, createdAt: ISODate("2024-01-20") },
+  { _id: "3", name: "Dr. Ahmed Fahmy", email: "ahmed.fahmy@gmail.com", password: "$2b$10$hashedpassword3", role: "instructor", level: "Professor", image: {}, createdAt: ISODate("2024-01-01") },
+  { _id: "4", name: "Omar Khaled", email: "omar.khaled@gmail.com", password: "$2b$10$hashedpassword4", role: "student", level: "Junior", image: {}, createdAt: ISODate("2024-02-01") },
+  { _id: "5", name: "Fatima Ali", email: "fatima.ali@gmail.com", password: "$2b$10$hashedpassword5", role: "student", level: "Senior", image: {}, createdAt: ISODate("2024-02-05") },
+  { _id: "6", name: "Youssef Ibrahim", email: "youssef.ibrahim@gmail.com", password: "$2b$10$hashedpassword6", role: "student", level: "Sophomore", image: {}, createdAt: ISODate("2024-02-10") },
+  { _id: "7", name: "Nour Ahmed", email: "nour.ahmed@gmail.com", password: "$2b$10$hashedpassword7", role: "student", level: "Junior", image: {}, createdAt: ISODate("2024-02-15") },
+  { _id: "8", name: "Mohamed Samir", email: "mohamed.samir@gmail.com", password: "$2b$10$hashedpassword8", role: "student", level: "Freshman", image: {}, createdAt: ISODate("2024-03-01") },
+  { _id: "9", name: "Layla Mahmoud", email: "layla.mahmoud@gmail.com", password: "$2b$10$hashedpassword9", role: "student", level: "Senior", image: {}, createdAt: ISODate("2024-03-05") },
+  { _id: "10", name: "Dr. Karim Nasser", email: "karim.nasser@gmail.com", password: "$2b$10$hashedpassword10", role: "instructor", level: "Assistant Professor", image: {}, createdAt: ISODate("2024-01-25") }
+])
+
+db.courses.insertMany([
+  { _id: "CS101", name: "Introduction to Computer Science", creditHours: 3, description: "Fundamental concepts of programming, algorithms, and computational thinking.", instructorId: 1, enrolled: 45, capacity: 50 },
+  { _id: "CS201", name: "Data Structures and Algorithms", creditHours: 4, description: "Advanced data structures including trees, graphs, and algorithm analysis.", instructorId: 1, enrolled: 38, capacity: 40 },
+  { _id: "CS301", name: "Software Engineering", creditHours: 3, description: "Software development lifecycle, design patterns, and project management.", instructorId: 1, enrolled: 30, capacity: 35 },
+  { _id: "DB101", name: "Database Fundamentals", creditHours: 3, description: "Introduction to relational databases, SQL, and database design principles.", instructorId: 2, enrolled: 42, capacity: 45 },
+  { _id: "DB201", name: "Advanced Database Systems", creditHours: 4, description: "NoSQL databases, distributed systems, and database optimization.", instructorId: 2, enrolled: 25, capacity: 30 },
+  { _id: "WEB101", name: "Web Development Fundamentals", creditHours: 3, description: "HTML, CSS, JavaScript, and responsive web design basics.", instructorId: 2, enrolled: 50, capacity: 50 },
+  { _id: "MOB101", name: "Mobile Application Development", creditHours: 3, description: "Building mobile apps using React Native and cross-platform development.", instructorId: 3, enrolled: 35, capacity: 40 },
+  { _id: "AI101", name: "Introduction to Artificial Intelligence", creditHours: 4, description: "Machine learning basics, neural networks, and AI applications.", instructorId: 3, enrolled: 40, capacity: 45 },
+  { _id: "SEC101", name: "Cybersecurity Fundamentals", creditHours: 3, description: "Network security, cryptography, and ethical hacking basics.", instructorId: 3, enrolled: 28, capacity: 35 },
+  { _id: "NET101", name: "Computer Networks", creditHours: 3, description: "Network protocols, architecture, and communication systems.", instructorId: 1, enrolled: 32, capacity: 40 }
+])
+
+db.files.insertMany([
+  { _id: "1", fileName: "CS101_Syllabus.pdf", fileType: "pdf", courseId: 1, fileSize: 1024, createdAt: ISODate("2024-09-01") },
+  { _id: "2", fileName: "DB101_Project_Guidelines.pdf", fileType: "pdf", courseId: 2, fileSize: 2048, createdAt: ISODate("2024-09-05") },
+  { _id: "3", fileName: "Ethical_Hacking_Resources.pdf", fileType: "pdf", courseId: 3, fileSize: 512, createdAt: ISODate("2024-10-12") },
+  { _id: "4", fileName: "MongoDB_Setup_Guide.pdf", fileType: "pdf", fileSize: 4096, createdAt: ISODate("2024-10-18") },
+  { _id: "5", fileName: "React_Native_Resources.pdf", fileType: "pdf", fileSize: 1024, createdAt: ISODate("2024-10-16") },
+  { _id: "6", fileName: "Project_Proposal_Feedback.docx", fileType: "word", fileSize: 2048, createdAt: ISODate("2024-10-12") },
+  { _id: "7", fileName: "Lecture_Slides_Week1.pdf", fileType: "pdf", fileSize: 3072, createdAt: ISODate("2024-09-02") },
+  { _id: "8", fileName: "Assignment1_Template.docx", fileType: "word", fileSize: 1024, createdAt: ISODate("2024-09-15") },
+  { _id: "9", fileName: "Course_Banner.png", fileType: "image", fileSize: 5120, createdAt: ISODate("2024-09-01") },
+  { _id: "10", fileName: "ER_Diagram_Example.png", fileType: "image", fileSize: 1536, createdAt: ISODate("2024-09-20") }
+])
+
+
+db.posts.insertMany([
+  { _id: 1, sender: { id: 1, name: "Dr. Ahmed Hassan", image: null }, courseId: 1, title: "Welcome to Introduction to Computer Science!", body: "Welcome everyone to CS101! This semester we will cover programming fundamentals, algorithms, and computational thinking. Please review the syllabus attached.", attachmentsId: [], type: "announcement", deadline: ISODate("2024-09-15"), createdAt: ISODate("2024-09-01") },
+  { _id: 2, sender: { id: 4, name: "Omar Khaled", image: null }, courseId: 1, title: "Question about Assignment 1", body: "I'm having trouble understanding the recursion problem in assignment 1. Can someone explain the base case concept?", attachmentsId: [], type: "question", deadline: null, createdAt: ISODate("2024-09-10") },
+  { _id: 3, sender: { id: 2, name: "Dr. Fatima Ali", image: null }, courseId: 2, title: "Database Project Guidelines", body: "The final project requirements have been posted. You will design a complete database system for a real-world application. Teams of 3-4 students are allowed.", attachmentsId: [], type: "announcement", deadline: ISODate("2024-12-01"), createdAt: ISODate("2024-09-05") },
+  { _id: 4, sender: { id: 7, name: "Nour Ahmed", image: null }, courseId: 2, title: "Study Group for Midterm", body: "Anyone interested in forming a study group for the upcoming midterm? We can meet at the library or online.", attachmentsId: [], type: "discussion", deadline: null, createdAt: ISODate("2024-10-01") },
+  { _id: 5, sender: { id: 3, name: "Dr. Karim Nasser", image: null }, courseId: 3, title: "Web Development Workshop", body: "Join us for a hands-on workshop on React.js! We'll build a complete web application from scratch.", attachmentsId: [], type: "discussion", deadline: null, createdAt: ISODate("2024-10-05") },
+  { _id: 6, sender: { id: 5, name: "Layla Mahmoud", image: null }, courseId: 4, title: "Design Patterns Clarification", body: "Can someone explain the difference between Factory and Abstract Factory patterns? The textbook explanation is confusing.", attachmentsId: [], type: "question", deadline: null, createdAt: ISODate("2024-10-08") },
+  { _id: 7, sender: { id: 1, name: "Dr. Ahmed Hassan", image: null }, courseId: 5, title: "Guest Lecture: AI in Healthcare", body: "We have a special guest lecture next week from Dr. Smith discussing applications of AI in healthcare.", attachmentsId: [], type: "announcement", deadline: ISODate("2024-10-25"), createdAt: ISODate("2024-10-10") },
+  { _id: 8, sender: { id: 8, name: "Mariam Saeed", image: null }, courseId: 3, title: "Ethical Hacking Resources", body: "I found some great resources for practicing ethical hacking. Sharing for anyone interested in cybersecurity!", attachmentsId: [], type: "discussion", deadline: null, createdAt: ISODate("2024-10-12") },
+  { _id: 9, sender: { id: 6, name: "Youssef Ibrahim", image: null }, courseId: 4, title: "React Native vs Flutter?", body: "For our final project, should we use React Native or Flutter? What are the pros and cons of each?", attachmentsId: [], type: "question", deadline: null, createdAt: ISODate("2024-10-15") },
+  { _id: 10, sender: { id: 2, name: "Dr. Fatima Ali", image: null }, courseId: 2, title: "MongoDB Workshop Announcement", body: "Important: We will have a hands-on MongoDB workshop. Please install MongoDB locally before attending.", attachmentsId: [], type: "announcement", deadline: ISODate("2024-11-01"), createdAt: ISODate("2024-10-18") }
+])
+
+db.comments.insertMany([
+  { _id: "1", postId: "2", sender: { id: "1", name: "Dr. Ahmed Hassan", image: {} }, body: "Great question Omar! The base case is the condition that stops the recursion. Think of it as the simplest version of the problem that you can solve directly without further recursion.", createdAt: ISODate("2024-09-10T14:30:00") },
+  { _id: "2", postId: "2", sender: { id: "4", name: "Omar Khaled", image: {} }, body: "Thank you Dr. Hassan! That makes much more sense now. So for factorial, the base case would be when n equals 0 or 1?", createdAt: ISODate("2024-09-10T15:00:00") },
+  { _id: "3", postId: "2", sender: { id: "1", name: "Dr. Ahmed Hassan", image: {} }, body: "Exactly! You've got it. factorial(0) = 1 and factorial(1) = 1 are your base cases.", createdAt: ISODate("2024-09-10T15:15:00") },
+  { _id: "4", postId: "4", sender: { id: "5", name: "Fatima Ali", image: {} }, body: "I'm interested! I can help with the normalization topics. When are you thinking of meeting?", createdAt: ISODate("2024-10-01T16:00:00") },
+  { _id: "5", postId: "4", sender: { id: "7", name: "Nour Ahmed", image: {} }, body: "How about Saturday at 2 PM? We can use the study room in the library.", createdAt: ISODate("2024-10-01T17:00:00") },
+  { _id: "6", postId: "6", sender: { id: "9", name: "Layla Mahmoud", image: {} }, body: "Factory creates objects of a single type, while Abstract Factory creates families of related objects. Think of Factory as a single factory, and Abstract Factory as a factory of factories!", createdAt: ISODate("2024-10-08T10:30:00") },
+  { _id: "7", postId: "9", sender: { id: "10", name: "Dr. Karim Nasser", image: {} }, body: "Both are excellent choices! React Native is great if you already know JavaScript/React. Flutter has better performance and a more consistent UI across platforms. For this course, I recommend React Native since we've covered React.", createdAt: ISODate("2024-10-15T11:00:00") },
+  { _id: "8", postId: "9", sender: { id: "6", name: "Youssef Ibrahim", image: {} }, body: "Thanks Dr. Nasser! I'll go with React Native then. Any recommended tutorials?", createdAt: ISODate("2024-10-15T12:00:00") },
+  { _id: "9", postId: "5", sender: { id: "4", name: "Omar Khaled", image: {} }, body: "This sounds amazing! Will we need to bring our own laptops?", createdAt: ISODate("2024-10-05T14:00:00") },
+  { _id: "10", postId: "5", sender: { id: "10", name: "Dr. Karim Nasser", image: {} }, body: "Yes, please bring your laptops with Node.js and VS Code installed. I'll send setup instructions before the workshop.", createdAt: ISODate("2024-10-05T15:00:00") }
+])
+
+db.chats.insertMany([
+  { _id: "1", user1: { id: "4", name: "Omar Khaled", image: {} }, user2: { id: "1", name: "Dr. Ahmed Hassan", image: {} }, lastMessage: "Thank you for the clarification, Dr. Hassan!", updatedAt: ISODate("2024-10-15T10:30:00") },
+  { _id: "2", user1: { id: "5", name: "Fatima Ali", image: {} }, user2: { id: "7", name: "Nour Ahmed", image: {} }, lastMessage: "See you at the library tomorrow!", updatedAt: ISODate("2024-10-14T18:00:00") },
+  { _id: "3", user1: { id: "6", name: "Youssef Ibrahim", image: {} }, user2: { id: "10", name: "Dr. Karim Nasser", image: {} }, lastMessage: "I'll check those resources. Thanks!", updatedAt: ISODate("2024-10-16T09:00:00") },
+  { _id: "4", user1: { id: "9", name: "Layla Mahmoud", image: {} }, user2: { id: "5", name: "Fatima Ali", image: {} }, lastMessage: "The cybersecurity workshop was great!", updatedAt: ISODate("2024-10-13T16:45:00") },
+  { _id: "5", user1: { id: "8", name: "Mohamed Samir", image: {} }, user2: { id: "4", name: "Omar Khaled", image: {} }, lastMessage: "Can you help me with the Python assignment?", updatedAt: ISODate("2024-10-17T11:20:00") },
+  { _id: "6", user1: { id: "2", name: "Dr. Sarah Mohamed", image: {} }, user2: { id: "7", name: "Nour Ahmed", image: {} }, lastMessage: "Your project proposal looks promising!", updatedAt: ISODate("2024-10-12T14:00:00") },
+  { _id: "7", user1: { id: "1", name: "Dr. Ahmed Hassan", image: {} }, user2: { id: "2", name: "Dr. Sarah Mohamed", image: {} }, lastMessage: "Let's discuss the AI course collaboration next week.", updatedAt: ISODate("2024-10-18T08:30:00") },
+  { _id: "8", user1: { id: "4", name: "Omar Khaled", image: {} }, user2: { id: "6", name: "Youssef Ibrahim", image: {} }, lastMessage: "The group project is coming along nicely!", updatedAt: ISODate("2024-10-16T20:15:00") },
+  { _id: "9", user1: { id: "3", name: "Dr. Ahmed Fahmy", image: {} }, user2: { id: "1", name: "Dr. Ahmed Hassan", image: {} }, lastMessage: "The new course has been approved and added to the system.", updatedAt: ISODate("2024-10-10T09:00:00") },
+  { _id: "10", user1: { id: "5", name: "Fatima Ali", image: {} }, user2: { id: "9", name: "Layla Mahmoud", image: {} }, lastMessage: "Good luck on your presentation tomorrow!", updatedAt: ISODate("2024-10-19T22:00:00") }
+])
+
+
+db.messages.insertMany([
+  { _id: 1, senderId: 4, receiverId: 1, text: "Hello Dr. Hassan, I have a question about the recursion lecture.", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-15T10:00:00") },
+  { _id: 2, senderId: 1, receiverId: 4, text: "Of course Omar, what would you like to know?", attachmentsId: [], replyTo: 1, createdAt: ISODate("2024-10-15T10:15:00") },
+  { _id: 3, senderId: 4, receiverId: 1, text: "Thank you for the clarification, Dr. Hassan!", attachmentsId: [], replyTo: 2, createdAt: ISODate("2024-10-15T10:30:00") },
+  { _id: 4, senderId: 5, receiverId: 7, text: "Hey Nour! Are we still meeting for the study group?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-14T17:30:00") },
+  { _id: 5, senderId: 7, receiverId: 5, text: "See you at the library tomorrow!", attachmentsId: [], replyTo: 4, createdAt: ISODate("2024-10-14T18:00:00") },
+  { _id: 6, senderId: 6, receiverId: 2, text: "Dr. Fatima, could you share the assignment deadline for the database project?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-16T09:00:00") },
+  { _id: 7, senderId: 2, receiverId: 6, text: "The deadline is October 30th. Let me know if you need an extension.", attachmentsId: [], replyTo: 6, createdAt: ISODate("2024-10-16T09:30:00") },
+  { _id: 8, senderId: 8, receiverId: 4, text: "Omar, did you finish the programming assignment?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-17T14:00:00") },
+  { _id: 9, senderId: 4, receiverId: 8, text: "Almost done! Want to compare solutions later?", attachmentsId: [], replyTo: 8, createdAt: ISODate("2024-10-17T14:20:00") },
+  { _id: 10, senderId: 8, receiverId: 4, text: "Sure, let's meet at the computer lab at 5pm.", attachmentsId: [], replyTo: 9, createdAt: ISODate("2024-10-17T14:35:00") },
+  { _id: 11, senderId: 5, receiverId: 3, text: "Dr. Karim, I submitted my network security report. Could you confirm receipt?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-18T11:00:00") },
+  { _id: 12, senderId: 3, receiverId: 5, text: "Received, Layla. I'll review it by next week.", attachmentsId: [], replyTo: 11, createdAt: ISODate("2024-10-18T11:45:00") },
+  { _id: 13, senderId: 7, receiverId: 6, text: "Youssef, do you have notes from today's AI lecture?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-19T16:00:00") },
+  { _id: 14, senderId: 6, receiverId: 7, text: "Yes! I'll send them to you tonight.", attachmentsId: [], replyTo: 13, createdAt: ISODate("2024-10-19T16:15:00") },
+  { _id: 15, senderId: 6, receiverId: 7, text: "Here are the notes from the AI lecture.", attachmentsId: [3], replyTo: 14, createdAt: ISODate("2024-10-19T20:00:00") },
+  { _id: 16, senderId: 4, receiverId: 5, text: "Layla, are you joining the hackathon next month?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-20T10:00:00") },
+  { _id: 17, senderId: 5, receiverId: 4, text: "Definitely! We should form a team together.", attachmentsId: [], replyTo: 16, createdAt: ISODate("2024-10-20T10:30:00") },
+  { _id: 18, senderId: 4, receiverId: 5, text: "Great idea! Let's ask Nour and Youssef too.", attachmentsId: [], replyTo: 17, createdAt: ISODate("2024-10-20T10:45:00") },
+  { _id: 19, senderId: 1, receiverId: 2, text: "Dr. Fatima, shall we coordinate on the midterm exam schedule?", attachmentsId: [], replyTo: null, createdAt: ISODate("2024-10-21T08:00:00") },
+  { _id: 20, senderId: 2, receiverId: 1, text: "Yes, let's discuss it in the faculty meeting tomorrow.", attachmentsId: [], replyTo: 19, createdAt: ISODate("2024-10-21T08:30:00") }
+])
+
+db.reactions.insertMany([
+  { _id: 1, postId: 1, senderId: 4, type: "like", createdAt: ISODate("2024-09-01T12:00:00") },
+  { _id: 2, postId: 1, senderId: 6, type: "love", createdAt: ISODate("2024-09-01T13:00:00") },
+  { _id: 3, postId: 1, senderId: 8, type: "like", createdAt: ISODate("2024-09-01T14:00:00") },
+  { _id: 4, postId: 3, senderId: 7, type: "like", createdAt: ISODate("2024-09-05T16:00:00") },
+  { _id: 5, postId: 5, senderId: 4, type: "love", createdAt: ISODate("2024-10-05T15:00:00") },
+  { _id: 6, postId: 5, senderId: 6, type: "love", createdAt: ISODate("2024-10-05T16:00:00") },
+  { _id: 7, postId: 7, senderId: 5, type: "shocked", createdAt: ISODate("2024-10-10T11:00:00") },
+  { _id: 8, postId: 7, senderId: 9, type: "love", createdAt: ISODate("2024-10-10T12:00:00") },
+  { _id: 9, postId: 8, senderId: 5, type: "like", createdAt: ISODate("2024-10-12T14:00:00") },
+  { _id: 10, postId: 2, senderId: 8, type: "laugh", createdAt: ISODate("2024-09-10T16:00:00") }
+])

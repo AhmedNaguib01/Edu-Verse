@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const fileSchema = new mongoose.Schema({
   fileName: String,
-  fileType: { type: String, enum: ["image", "pdf", "word"] },
-  fileData: Buffer,
-  courseId: { type: String, ref: "Course" },
-  postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
-  messageId: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
+  fileType: { type: String, enum: ["image", "pdf", "word"], required: true },
+  fileData: { type: Buffer, required: true },
+  fileSize: { type: Number, default: 0 },
+  size: { type: Number, default: 0 },
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
   createdAt: { type: Date, default: Date.now },
 });
 

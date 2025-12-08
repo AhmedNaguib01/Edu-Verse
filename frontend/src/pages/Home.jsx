@@ -72,6 +72,14 @@ const Home = () => {
     return () => clearInterval(refreshInterval);
   }, []);
 
+  const getAvatarSrc = (item) => {
+    if (!item) return null;
+    if (item.image && item.image.fileId) return getFileUrl(item.image.fileId);
+    if (item.image && item.image.url) return item.image.url;
+    if (item.profilePicture) return getFileUrl(item.profilePicture);
+    return null;
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (openMenuPostId) {
@@ -396,9 +404,9 @@ const Home = () => {
                 )}
                 <form onSubmit={handleCreatePost} className="create-post">
                   <Avatar>
-                    {user?.profilePicture ? (
+                    {getAvatarSrc(user) ? (
                       <img
-                        src={getFileUrl(user.profilePicture)}
+                        src={getAvatarSrc(user)}
                         alt={user.name}
                         className="avatar-img"
                       />
@@ -520,9 +528,9 @@ const Home = () => {
                             }}
                             style={{ cursor: "pointer" }}
                           >
-                            {post.sender.profilePicture ? (
+                            {getAvatarSrc(post.sender) ? (
                               <img
-                                src={getFileUrl(post.sender.profilePicture)}
+                                src={getAvatarSrc(post.sender)}
                                 alt={post.sender.name}
                                 className="avatar-img"
                               />
@@ -699,11 +707,9 @@ const Home = () => {
                                   }}
                                   style={{ cursor: "pointer" }}
                                 >
-                                  {comment.sender.profilePicture ? (
+                                  {getAvatarSrc(comment.sender) ? (
                                     <img
-                                      src={getFileUrl(
-                                        comment.sender.profilePicture
-                                      )}
+                                      src={getAvatarSrc(comment.sender)}
                                       alt={comment.sender.name}
                                       className="avatar-img"
                                     />
