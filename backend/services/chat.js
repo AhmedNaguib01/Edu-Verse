@@ -2,9 +2,21 @@ const Chat = require("../models/Chat");
 const Message = require("../models/Message");
 const User = require("../models/User");
 
+// Helper to validate ObjectId - must be exactly 24 hex characters
+const isValidObjectId = (id) => {
+  if (!id) return false;
+  const str = String(id);
+  return /^[a-fA-F0-9]{24}$/.test(str);
+};
+
 const getAllChats = async (req, res) => {
   try {
     const userId = req.userId;
+    
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+    
     const { page = 1, limit = 50 } = req.query;
     const skip = (page - 1) * limit;
     const limitNum = Math.min(parseInt(limit), 100);
@@ -24,13 +36,18 @@ const getAllChats = async (req, res) => {
 
     const userIds = new Set();
     chats.forEach((chat) => {
-      userIds.add(chat.user1.id.toString());
-      userIds.add(chat.user2.id.toString());
+      if (chat.user1?.id) userIds.add(chat.user1.id.toString());
+      if (chat.user2?.id) userIds.add(chat.user2.id.toString());
     });
 
-    const users = await User.find({ _id: { $in: Array.from(userIds) } })
-      .select("_id name profilePicture")
-      .lean();
+    // Filter to only valid ObjectIds
+    const validUserIds = Array.from(userIds).filter(isValidObjectId);
+    
+    const users = validUserIds.length > 0
+      ? await User.find({ _id: { $in: validUserIds } })
+          .select("_id name profilePicture")
+          .lean()
+      : [];
 
     const userMap = {};
     users.forEach((u) => {
@@ -126,6 +143,10 @@ const createChat = async (req, res) => {
       return res.status(400).json({ error: "user2Id is required" });
     }
 
+    if (!isValidObjectId(user1Id) || !isValidObjectId(user2Id)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+
     if (user1Id === user2Id) {
       return res
         .status(400)
@@ -177,12 +198,12 @@ const createChat = async (req, res) => {
       user1: {
         id: user1._id,
         name: user1.name,
-        image: user1.image ? Buffer.from(user1.image) : null,
+        image: user1.image || {},
       },
       user2: {
         id: user2._id,
         name: user2.name,
-        image: user2.image ? Buffer.from(user2.image) : null,
+        image: user2.image || {},
       },
       lastMessage: "",
     });

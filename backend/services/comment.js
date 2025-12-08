@@ -1,4 +1,12 @@
 const Comment = require("../models/Comment");
+const mongoose = require("mongoose");
+
+// Helper to validate ObjectId - must be exactly 24 hex characters
+const isValidObjectId = (id) => {
+  if (!id) return false;
+  const str = String(id);
+  return /^[a-fA-F0-9]{24}$/.test(str);
+};
 
 exports.getComments = async (req, res) => {
   try {
@@ -8,6 +16,10 @@ exports.getComments = async (req, res) => {
       return res.status(400).json({ error: "postId is required" });
     }
 
+    if (!isValidObjectId(postId)) {
+      return res.status(400).json({ error: "Invalid postId format" });
+    }
+
     const comments = await Comment.find({ postId })
       .sort({ createdAt: 1 })
       .lean();
@@ -15,10 +27,13 @@ exports.getComments = async (req, res) => {
     const User = require("../models/User");
     const userIds = [
       ...new Set(comments.map((c) => c.sender?.id?.toString()).filter(Boolean)),
-    ];
-    const users = await User.find({ _id: { $in: userIds } })
-      .select("_id name profilePicture")
-      .lean();
+    ].filter(isValidObjectId);
+    
+    const users = userIds.length > 0
+      ? await User.find({ _id: { $in: userIds } })
+          .select("_id name profilePicture")
+          .lean()
+      : [];
 
     const userMap = {};
     users.forEach((u) => {
@@ -61,6 +76,10 @@ exports.createComment = async (req, res) => {
       return res.status(400).json({ error: "postId and body are required" });
     }
 
+    if (!isValidObjectId(postId)) {
+      return res.status(400).json({ error: "Invalid postId format" });
+    }
+
     const User = require("../models/User");
     const user = await User.findById(req.userId);
 
@@ -73,7 +92,7 @@ exports.createComment = async (req, res) => {
       sender: {
         id: user._id,
         name: user.name,
-        profilePicture: user.profilePicture || null,
+        image: user.image || (user.profilePicture ? { fileId: user.profilePicture } : {}),
       },
       body,
       parentCommentId: parentCommentId || null,

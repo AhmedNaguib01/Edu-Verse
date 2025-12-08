@@ -28,6 +28,14 @@ import { getInitials } from "../lib/utils";
 import { getFileUrl } from "../api/files";
 import "../styles/navbar.css";
 
+const getAvatarSrc = (item) => {
+  if (!item) return null;
+  if (item.image && item.image.fileId) return getFileUrl(item.image.fileId);
+  if (item.image && item.image.url) return item.image.url;
+  if (item.profilePicture) return getFileUrl(item.profilePicture);
+  return null;
+};
+
 const Navbar = ({ user }) => {
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -199,10 +207,10 @@ const Navbar = ({ user }) => {
             <DropdownMenuTrigger asChild>
               <button className="avatar-button">
                 <Avatar>
-                  {user?.profilePicture ? (
+                  {getAvatarSrc(user) ? (
                     <img
-                      src={getFileUrl(user.profilePicture)}
-                      alt={user.name}
+                      src={getAvatarSrc(user)}
+                      alt={user?.name}
                       className="avatar-img"
                     />
                   ) : (

@@ -2,9 +2,22 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const Course = require("../models/Course");
 
+// Helper to validate ObjectId - must be exactly 24 hex characters
+const isValidObjectId = (id) => {
+  if (!id) return false;
+  const str = String(id);
+  return /^[a-fA-F0-9]{24}$/.test(str);
+};
+
 const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password").lean();
+    const { id } = req.params;
+    
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+    
+    const user = await User.findById(id).select("-password").lean();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -65,19 +78,25 @@ const updateUserProfile = async (req, res) => {
 
 const getUserPosts = async (req, res) => {
   try {
+    const { id } = req.params;
+    
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+    
     const { page = 1, limit = 20 } = req.query;
     const skip = (page - 1) * limit;
     const limitNum = Math.min(parseInt(limit), 50);
 
     const [posts, total, userData] = await Promise.all([
-      Post.find({ "sender.id": req.params.id })
+      Post.find({ "sender.id": id })
         .select("title body type courseId createdAt attachmentsId sender")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limitNum)
         .lean(),
-      Post.countDocuments({ "sender.id": req.params.id }),
-      User.findById(req.params.id).select("name profilePicture").lean(),
+      Post.countDocuments({ "sender.id": id }),
+      User.findById(id).select("name profilePicture").lean(),
     ]);
 
     const updatedPosts = posts.map((post) => ({
@@ -106,7 +125,13 @@ const getUserPosts = async (req, res) => {
 
 const getUserCourses = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const { id } = req.params;
+    
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+    
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -169,6 +194,11 @@ const searchUsers = async (req, res) => {
 const getUserStats = async (req, res) => {
   try {
     const userId = req.params.id;
+    
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+    
     const Comment = require("../models/Comment");
     const Reaction = require("../models/Reaction");
 

@@ -1,12 +1,23 @@
 const Message = require("../models/Message");
 const Chat = require("../models/Chat");
 
+// Helper to validate ObjectId - must be exactly 24 hex characters
+const isValidObjectId = (id) => {
+  if (!id) return false;
+  const str = String(id);
+  return /^[a-fA-F0-9]{24}$/.test(str);
+};
+
 const getMessages = async (req, res) => {
   try {
     const { chatId } = req.query;
 
     if (!chatId) {
       return res.status(400).json({ error: "chatId is required" });
+    }
+
+    if (!isValidObjectId(chatId)) {
+      return res.status(400).json({ error: "Invalid chatId format" });
     }
 
     const chat = await Chat.findById(chatId);

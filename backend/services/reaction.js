@@ -1,4 +1,12 @@
 const Reaction = require("../models/Reaction");
+const mongoose = require("mongoose");
+
+// Helper to validate ObjectId - must be exactly 24 hex characters
+const isValidObjectId = (id) => {
+  if (!id) return false;
+  const str = String(id);
+  return /^[a-fA-F0-9]{24}$/.test(str);
+};
 
 exports.getReactions = async (req, res) => {
   try {
@@ -8,7 +16,10 @@ exports.getReactions = async (req, res) => {
       return res.status(400).json({ error: "postId is required" });
     }
 
-    const mongoose = require("mongoose");
+    if (!isValidObjectId(postId)) {
+      return res.status(400).json({ error: "Invalid postId format" });
+    }
+
     const ObjectId = mongoose.Types.ObjectId;
 
     const reactions = await Reaction.aggregate([
@@ -50,7 +61,6 @@ exports.getReactions = async (req, res) => {
 exports.upsertReaction = async (req, res) => {
   try {
     const { postId, type } = req.body;
-    const mongoose = require("mongoose");
     const ObjectId = mongoose.Types.ObjectId;
 
     if (!req.userId) {
@@ -59,6 +69,10 @@ exports.upsertReaction = async (req, res) => {
 
     if (!postId || !type) {
       return res.status(400).json({ error: "postId and type are required" });
+    }
+
+    if (!isValidObjectId(postId)) {
+      return res.status(400).json({ error: "Invalid postId format" });
     }
 
     const validTypes = ["like", "love", "shocked", "laugh", "sad"];
@@ -94,11 +108,14 @@ exports.upsertReaction = async (req, res) => {
 exports.deleteReaction = async (req, res) => {
   try {
     const { postId } = req.params;
-    const mongoose = require("mongoose");
     const ObjectId = mongoose.Types.ObjectId;
 
     if (!req.userId) {
       return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (!isValidObjectId(postId)) {
+      return res.status(400).json({ error: "Invalid postId format" });
     }
 
     const result = await Reaction.findOneAndDelete({

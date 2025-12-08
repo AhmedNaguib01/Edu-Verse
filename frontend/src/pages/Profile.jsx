@@ -188,11 +188,12 @@ const Profile = () => {
         profilePicId = uploadedFile._id;
       }
 
-      // Build update data; store `image` as an object referencing the file id
+      // Build update data
       const updateData = {
         name: editForm.name,
         email: editForm.email,
         level: editForm.level,
+        profilePicture: profilePicId || profileUser.profilePicture || null,
         image: profilePicId
           ? { fileId: profilePicId }
           : profileUser.image || {},
