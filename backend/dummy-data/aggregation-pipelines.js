@@ -1,18 +1,8 @@
-/**
- * EduVerse MongoDB Aggregation Pipelines
- * 
- * Copy and paste these directly into MongoDB Compass Aggregation tab
- * or run them in mongosh using: db.collection.aggregate([...])
- */
-
-// ============================================================================
 // PIPELINE 1: Course Engagement Analytics
 // Collection: posts
 // Purpose: Analyze engagement metrics per course (posts, comments, reactions)
-// ============================================================================
 
 db.posts.aggregate([
-  // Group posts by courseId
   {
     $group: {
       _id: "$courseId",
@@ -30,7 +20,6 @@ db.posts.aggregate([
       uniqueContributors: { $addToSet: "$sender.id" }
     }
   },
-  // Lookup comments for each course's posts
   {
     $lookup: {
       from: "comments",
@@ -39,7 +28,6 @@ db.posts.aggregate([
       as: "comments"
     }
   },
-  // Lookup reactions for each course's posts
   {
     $lookup: {
       from: "reactions",
@@ -48,7 +36,6 @@ db.posts.aggregate([
       as: "reactions"
     }
   },
-  // Lookup course details
   {
     $lookup: {
       from: "courses",
@@ -57,14 +44,12 @@ db.posts.aggregate([
       as: "courseInfo"
     }
   },
-  // Unwind course info
   {
     $unwind: {
       path: "$courseInfo",
       preserveNullAndEmptyArrays: true
     }
   },
-  // Project final fields
   {
     $project: {
       courseId: "$_id",
@@ -93,22 +78,16 @@ db.posts.aggregate([
       }
     }
   },
-  // Sort by engagement score
   {
     $sort: { engagementScore: -1 }
   }
 ])
 
-
-
-// ============================================================================
 // PIPELINE 2: Top Contributors Leaderboard
 // Collection: users
 // Purpose: Rank users by their contributions (posts, comments, reactions)
-// ============================================================================
 
 db.users.aggregate([
-  // Lookup posts created by each user
   {
     $lookup: {
       from: "posts",
@@ -117,7 +96,6 @@ db.users.aggregate([
       as: "posts"
     }
   },
-  // Lookup comments made by each user
   {
     $lookup: {
       from: "comments",
@@ -126,7 +104,6 @@ db.users.aggregate([
       as: "comments"
     }
   },
-  // Lookup reactions given by each user
   {
     $lookup: {
       from: "reactions",
@@ -135,7 +112,6 @@ db.users.aggregate([
       as: "reactionsGiven"
     }
   },
-  // Lookup reactions received on user's posts
   {
     $lookup: {
       from: "reactions",
@@ -150,7 +126,6 @@ db.users.aggregate([
       as: "reactionsReceived"
     }
   },
-  // Calculate contribution metrics
   {
     $project: {
       name: 1,
@@ -179,7 +154,6 @@ db.users.aggregate([
           }
         }
       },
-      // Contribution score: posts=5pts, comments=3pts, reactions=1pt
       contributionScore: {
         $add: [
           { $multiply: [{ $size: "$posts" }, 5] },
@@ -191,26 +165,19 @@ db.users.aggregate([
       memberSince: "$createdAt"
     }
   },
-  // Sort by contribution score
   {
     $sort: { contributionScore: -1 }
   },
-  // Limit to top 10
   {
     $limit: 10
   }
 ])
 
-
-
-// ============================================================================
 // PIPELINE 3: Reaction Distribution Analysis
 // Collection: reactions
 // Purpose: Analyze reaction types distribution across posts and time
-// ============================================================================
 
 db.reactions.aggregate([
-  // Group by reaction type
   {
     $group: {
       _id: "$type",
@@ -219,7 +186,6 @@ db.reactions.aggregate([
       uniquePosts: { $addToSet: "$postId" }
     }
   },
-  // Lookup post details to get course info
   {
     $lookup: {
       from: "posts",
@@ -228,7 +194,6 @@ db.reactions.aggregate([
       as: "postDetails"
     }
   },
-  // Calculate metrics
   {
     $project: {
       reactionType: "$_id",
@@ -254,11 +219,9 @@ db.reactions.aggregate([
       }
     }
   },
-  // Sort by count
   {
     $sort: { totalCount: -1 }
   },
-  // Add total summary using $facet
   {
     $group: {
       _id: null,
@@ -266,7 +229,6 @@ db.reactions.aggregate([
       grandTotal: { $sum: "$totalCount" }
     }
   },
-  // Final projection
   {
     $project: {
       _id: 0,
@@ -277,14 +239,10 @@ db.reactions.aggregate([
   }
 ])
 
-
-
-// ============================================================================
 // PIPELINE 4: Instructor Course Performance Report
 // Collection: courses
 // Purpose: Detailed analytics for instructor's courses with student engagement
 // Note: Replace ObjectId("INSTRUCTOR_ID_HERE") with actual instructor ID
-// ============================================================================
 
 db.courses.aggregate([
   // Match courses by instructor (replace with actual ObjectId)
@@ -293,7 +251,6 @@ db.courses.aggregate([
   //     instructorId: ObjectId("INSTRUCTOR_ID_HERE")
   //   }
   // },
-  // Lookup all posts in each course
   {
     $lookup: {
       from: "posts",
@@ -302,7 +259,6 @@ db.courses.aggregate([
       as: "coursePosts"
     }
   },
-  // Lookup comments for course posts
   {
     $lookup: {
       from: "comments",
@@ -311,7 +267,6 @@ db.courses.aggregate([
       as: "courseComments"
     }
   },
-  // Lookup reactions for course posts
   {
     $lookup: {
       from: "reactions",
@@ -320,7 +275,6 @@ db.courses.aggregate([
       as: "courseReactions"
     }
   },
-  // Lookup instructor details
   {
     $lookup: {
       from: "users",
@@ -329,7 +283,6 @@ db.courses.aggregate([
       as: "instructorInfo"
     }
   },
-  // Calculate metrics
   {
     $project: {
       courseId: "$_id",
@@ -415,7 +368,6 @@ db.courses.aggregate([
       }
     }
   },
-  // Sort by enrollment
   {
     $sort: { enrolled: -1 }
   }
