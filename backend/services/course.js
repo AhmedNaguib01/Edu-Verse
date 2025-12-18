@@ -55,6 +55,7 @@ exports.createCourse = async (req, res) => {
       name,
       creditHours,
       description,
+      capacity,
       instructorId: [req.userId],
     });
 
@@ -69,7 +70,7 @@ exports.createCourse = async (req, res) => {
 exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, creditHours, description } = req.body;
+    const { name, creditHours, description, capacity} = req.body;
 
     const course = await Course.findById(id);
 
@@ -89,6 +90,8 @@ exports.updateCourse = async (req, res) => {
     if (name !== undefined) course.name = name;
     if (creditHours !== undefined) course.creditHours = creditHours;
     if (description !== undefined) course.description = description;
+    if (capacity !== undefined) course.capacity = capacity;
+
 
     await course.save();
     res.json(course);

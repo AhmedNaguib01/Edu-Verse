@@ -1,7 +1,9 @@
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
+const Chat = require("../models/Chat");
 const Course = require("../models/Course");
-const { getTopContributorsLeaderboard } = require("../dummy-data/aggregation-pipelines");
 
 // Helper to validate ObjectId - must be exactly 24 hex characters
 const isValidObjectId = (id) => {
@@ -58,7 +60,40 @@ const updateUserProfile = async (req, res) => {
     }).select("-password");
 
     if (!user) return res.status(404).json({ error: "User not found" });
-    
+
+    // Update denormalized profile data in related collections
+    const newImage = image || profilePicture;
+
+    if (newImage || name) {
+      const userId = new mongoose.Types.ObjectId(id);
+      const updateFields = {};
+      if (newImage) updateFields["sender.image"] = newImage;
+      if (name) updateFields["sender.name"] = name;
+
+      // Update Posts and Comments in parallel
+      await Promise.all([
+        Post.updateMany({ "sender.id": userId }, { $set: updateFields }),
+        Comment.updateMany({ "sender.id": userId }, { $set: updateFields }),
+      ]);
+
+      // Update Chats (user can be user1 or user2)
+      const chatUpdateFields1 = {};
+      const chatUpdateFields2 = {};
+      if (newImage) {
+        chatUpdateFields1["user1.image"] = newImage;
+        chatUpdateFields2["user2.image"] = newImage;
+      }
+      if (name) {
+        chatUpdateFields1["user1.name"] = name;
+        chatUpdateFields2["user2.name"] = name;
+      }
+
+      await Promise.all([
+        Chat.updateMany({ "user1.id": userId }, { $set: chatUpdateFields1 }),
+        Chat.updateMany({ "user2.id": userId }, { $set: chatUpdateFields2 }),
+      ]);
+    }
+
     res.json(user);
   } catch (error) {
     console.error("Update user profile error:", error);
@@ -199,23 +234,6 @@ const getUserStats = async (req, res) => {
   }
 };
 
-const instructorReport = async (req, res) => {
-  try {
-    const userId = req.userId; // req.userId is set by auth middleware
-    if (!userId) return res.status(400).json({ error: "User ID is required" });
-    
-    const user = await User.findById(userId).select("-password").lean();
-    if (!user) return res.status(404).json({ error: "User not found" });
-    if(user.role !== "instructor") return res.status(403).json({ error: "Unauthorized" });
-
-    const report = await getTopContributorsLeaderboard();
-    res.json({ report });
-
-  } catch (error) {
-    console.error("Instructor report error:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-}
 module.exports = {
   getUserProfile,
   updateUserProfile,
@@ -223,5 +241,4 @@ module.exports = {
   getUserCourses,
   searchUsers,
   getUserStats,
-  instructorReport,
 };

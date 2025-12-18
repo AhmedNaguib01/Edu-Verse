@@ -35,3 +35,21 @@ export const getInstructorReport = async () => {
   const response = await apiClient.get("/users/report");
   return response.data;
 };
+
+// Get instructor report 2 (course engagement analytics)
+export const getInstructorReport2 = async () => {
+  const response = await apiClient.get("/users/report2");
+  return response.data;
+};
+
+// Get instructor report 3 (reaction distribution analysis)
+export const getInstructorReport3 = async () => {
+  const response = await apiClient.get("/users/report3");
+  return response.data;
+};
+
+// Get instructor report 4 (instructor course performance)
+export const getInstructorReport4 = async () => {
+  const response = await apiClient.get("/users/report4");
+  return response.data;
+};

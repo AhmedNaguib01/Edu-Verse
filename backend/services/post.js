@@ -20,18 +20,19 @@ exports.getAllPosts = async (req, res) => {
       .limit(parseInt(limit))
       .skip(parseInt(skip))
       .lean();
-    
+
     const isValidObjectId = (id) => /^[a-fA-F0-9]{24}$/.test(String(id));
-    
+
     const userIds = [
       ...new Set(posts.map((p) => p.sender?.id?.toString()).filter(Boolean)),
     ].filter(isValidObjectId);
-    
-    const users = userIds.length > 0 
-      ? await User.find({ _id: { $in: userIds } })
-          .select("_id name profilePicture")
-          .lean()
-      : [];
+
+    const users =
+      userIds.length > 0
+        ? await User.find({ _id: { $in: userIds } })
+            .select("_id name profilePicture")
+            .lean()
+        : [];
 
     const userMap = {};
     users.forEach((u) => {
@@ -89,14 +90,15 @@ exports.getPostById = async (req, res) => {
     });
 
     const isValidObjectId = (id) => /^[a-fA-F0-9]{24}$/.test(String(id));
-    
+
     const validUserIds = Array.from(userIds).filter(isValidObjectId);
-    
-    const users = validUserIds.length > 0
-      ? await User.find({ _id: { $in: validUserIds } })
-          .select("_id name profilePicture")
-          .lean()
-      : [];
+
+    const users =
+      validUserIds.length > 0
+        ? await User.find({ _id: { $in: validUserIds } })
+            .select("_id name profilePicture")
+            .lean()
+        : [];
 
     const userMap = {};
     users.forEach((u) => {
@@ -190,7 +192,9 @@ exports.createPost = async (req, res) => {
       sender: {
         id: user._id,
         name: user.name,
-        image: user.image || (user.profilePicture ? { fileId: user.profilePicture } : {}),
+        image:
+          user.image ||
+          (user.profilePicture ? { fileId: user.profilePicture } : {}),
       },
       courseId,
       title,

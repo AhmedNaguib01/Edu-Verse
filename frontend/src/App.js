@@ -12,6 +12,9 @@ import CourseDetails from "./pages/CourseDetails";
 import Chats from "./pages/Chats";
 import PostDetail from "./pages/PostDetail";
 import InstructorReport from "./pages/InstructorReport";
+import InstructorReport2 from "./pages/InstructorReport2";
+import InstructorReport3 from "./pages/InstructorReport3";
+import InstructorReport4 from "./pages/InstructorReport4";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +49,9 @@ function App() {
           <Route path="/chats" element={ <ProtectedRoute> <Chats /> </ProtectedRoute> } />
           <Route path="/posts/:postId" element={<ProtectedRoute> <PostDetail /></ProtectedRoute>}/>
           <Route path="/report" element={<ProtectedRoute> <InstructorReport /></ProtectedRoute>}/>
+          <Route path="/report2" element={ <ProtectedRoute> <InstructorReport2 /> </ProtectedRoute> } />
+          <Route path="/report3" element={ <ProtectedRoute> <InstructorReport3 /> </ProtectedRoute> } />
+          <Route path="/report4" element={ <ProtectedRoute> <InstructorReport4 /> </ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
