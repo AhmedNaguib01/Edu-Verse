@@ -260,7 +260,7 @@ const CourseDetails = () => {
     if (!files || files.length === 0) return;
 
     await uploadFiles(files);
-    e.target.value = ""; 
+    e.target.value = "";
   };
 
   const handleDragOver = (e) => {
@@ -934,7 +934,9 @@ const CourseDetails = () => {
                           </div>
                           <div className="file-cell">{file.fileType}</div>
                           <div className="file-cell">
-                            {file.size ? (file.size / 1024).toFixed(2) : "N/A"}{" "}
+                            {file.fileSize
+                              ? (file.fileSize / 1024).toFixed(2)
+                              : "N/A"}{" "}
                             KB
                           </div>
                           <div className="file-cell file-actions-cell">

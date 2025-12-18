@@ -5,8 +5,7 @@ const fileSchema = new mongoose.Schema({
   fileType: { type: String, enum: ["image", "pdf", "word"], required: true },
   fileData: { type: Buffer, required: true },
   fileSize: { type: Number, default: 0 },
-  size: { type: Number, default: 0 },
-  courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+  courseId: { type: String, ref: "Course" },
   createdAt: { type: Date, default: Date.now },
 });
 

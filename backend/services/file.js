@@ -23,7 +23,8 @@ const uploadFile = async (req, res) => {
     }
 
     const maxSize = 10 * 1024 * 1024;
-    if (req.file.size > maxSize) return res.status(413).json({ error: "File size exceeds 10MB limit" });
+    if (req.file.size > maxSize)
+      return res.status(413).json({ error: "File size exceeds 10MB limit" });
 
     let fileType = "image";
     if (req.file.mimetype === "application/pdf") {
@@ -36,13 +37,19 @@ const uploadFile = async (req, res) => {
       fileType = "word";
     }
 
-    const file = new File({
+    const fileData = {
       fileName: req.file.originalname,
       fileType,
       fileData: req.file.buffer,
-      size: req.file.size,
-      courseId: courseId || null,
-    });
+      fileSize: req.file.size,
+    };
+
+    // Only add courseId if it's provided and not empty
+    if (courseId && courseId.trim() !== "") {
+      fileData.courseId = courseId;
+    }
+
+    const file = new File(fileData);
 
     await file.save();
 
@@ -50,7 +57,7 @@ const uploadFile = async (req, res) => {
       _id: file._id,
       fileName: file.fileName,
       fileType: file.fileType,
-      size: req.file.size,
+      fileSize: file.fileSize,
       createdAt: file.createdAt,
     });
   } catch (error) {
@@ -93,7 +100,7 @@ const getFilesByCourse = async (req, res) => {
     const { courseId } = req.params;
 
     const files = await File.find({ courseId }).select(
-      "_id fileName fileType createdAt"
+      "_id fileName fileType fileSize createdAt"
     );
 
     const filesWithSize = files.map((file) => ({
@@ -101,7 +108,7 @@ const getFilesByCourse = async (req, res) => {
       fileName: file.fileName,
       fileType: file.fileType,
       createdAt: file.createdAt,
-      size: file.size || (file.fileData ? file.fileData.length : 0),
+      fileSize: file.fileSize || 0,
     }));
 
     res.json(filesWithSize);

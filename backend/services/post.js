@@ -1,6 +1,8 @@
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const Reaction = require("../models/Reaction");
+const User = require("../models/User");
+const mongoose = require("mongoose");
 
 exports.getAllPosts = async (req, res) => {
   try {
@@ -12,14 +14,12 @@ exports.getAllPosts = async (req, res) => {
 
     const posts = await Post.find(filter)
       .select(
-        "title body type courseId sender attachmentsId deadline eventDate eventLocation createdAt"
+        "title body type courseId sender attachmentsId deadline createdAt"
       )
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip(parseInt(skip))
       .lean();
-
-    const User = require("../models/User");
     
     const isValidObjectId = (id) => /^[a-fA-F0-9]{24}$/.test(String(id));
     
@@ -65,9 +65,7 @@ exports.getAllPosts = async (req, res) => {
 exports.getPostById = async (req, res) => {
   try {
     const { id } = req.params;
-    const mongoose = require("mongoose");
     const ObjectId = mongoose.Types.ObjectId;
-    const User = require("../models/User");
 
     const post = await Post.findById(id)
       .select(
@@ -182,7 +180,6 @@ exports.createPost = async (req, res) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    const User = require("../models/User");
     const user = await User.findById(req.userId);
 
     if (!user) {

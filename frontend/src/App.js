@@ -39,40 +39,11 @@ function App() {
           <Route path="/forgot-password" element={ <AuthRoute> <ForgotPassword /> </AuthRoute>}/>
           <Route path="/reset-password/:token" element={ <AuthRoute> <ResetPassword /> </AuthRoute>}/>
           <Route path="/" element={ <ProtectedRoute> <Home /> </ProtectedRoute> }/>
-          <Route path="/profile" element={ <ProtectedRoute> <Profile /> </ProtectedRoute>}
-          />
-          <Route
-            path="/profile/:userId"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/courses"
-            element={
-              <ProtectedRoute>
-                <Courses />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/courses/:id"
-            element={
-              <ProtectedRoute>
-                <CourseDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/chats"
-            element={
-              <ProtectedRoute>
-                <Chats />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/profile" element={ <ProtectedRoute> <Profile /> </ProtectedRoute>} />
+          <Route path="/profile/:userId" element={ <ProtectedRoute> <Profile /> </ProtectedRoute>} />
+          <Route path="/courses" element={ <ProtectedRoute> <Courses /> </ProtectedRoute> } />
+          <Route path="/courses/:id" element={ <ProtectedRoute> <CourseDetails /> </ProtectedRoute>}/>
+          <Route path="/chats" element={ <ProtectedRoute> <Chats /> </ProtectedRoute> } />
           <Route path="/posts/:postId" element={<ProtectedRoute> <PostDetail /></ProtectedRoute>}/>
           <Route path="/report" element={<ProtectedRoute> <InstructorReport /></ProtectedRoute>}/>
           <Route path="*" element={<Navigate to="/" replace />} />
